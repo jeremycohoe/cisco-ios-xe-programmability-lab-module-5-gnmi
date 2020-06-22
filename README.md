@@ -1,388 +1,233 @@
-## [IOS XE Programmability Lab](https://github.com/jeremycohoe/cisco-ios-xe-programmability-lab)
+
+## **[IOS XE Programmability Lab](https://github.com/jeremycohoe/cisco-ios-xe-programmability-lab)**
+
+## **Module: gNMI**
+
+## Topics Covered 
+Introduction to gNMI
+
+Enabling the API
+
+Tooling 
+
+Use Cases and examples
 
 
-## Module: Model Driven Telemetry
 
-## Topics Covered:
-Model-Driven Telemetry
+## Introduction to gNMI
 
-Verify clock synchronization
+The Google Remote Proceudure Call (g) Network Management Interface (NMI), or gNMI, is a specification of RPC's and behaviours for managing the state on network devices. It is built on the open source gRPC framework and uses the Protobuf IDL (protocol buffers interactive data language)
 
-NETCONF Dial-In Dynamic Subscriptions
+Details of Protocol Buffers is available at from Google Developers at [https://developers.google.com/protocol-buffers/docs/overview](https://developers.google.com/protocol-buffers/docs/overview) while the specification for gNMI itself is available on Github/Openconfig at [https://github.com/openconfig/gnmi](https://github.com/openconfig/gnmi) and the actual gnmi.proto file is defined at [https://github.com/openconfig/gnmi/blob/master/proto/gnmi/gnmi.proto](https://github.com/openconfig/gnmi/blob/master/proto/gnmi/gnmi.proto) - These resrouces can be refered if needed however for the purpose of this lab the it is not necessary to have a deeper understaning of these concepts.
 
-gNMI Dial-In Dynamic Subscriptions
+![](gnmi_intro.png)
 
-gRPC Dial-Out Configured Subscriptions
+Similar to the NETCONF and RESTCONF programmatic interfaces, gNMI can be used for a variety of operations including retreiving operational and runtime details using the GET operations, as well as making configurtion changes using the SET operation. The SUBSCRIBE operation supports Model Driven Telemetry, or streaming telemetry, to be enabled from this interface as well.
 
-Explore Telegraf
+![](./api_operations.png)
 
-Exploring InfluxdDB
+All of the programmatic interfaces (NETCONF, RESTCONF, gNMI, and gRPC) share the same set of YANG data models. An example is to review the interface configurations including interface descriptions which can be completed by using **any** of the programmatic interfaces using the same YANG data model: **Cisco-IOS-XE-interface-oper.YANG**. 
 
-Exploring Grafana Dashboards
+![](./api_comparison.png)
 
-Conclusion
+## Enabling the API
 
+The gNMI API has 2 mode of operating: secure and insecure. For production use insecure mode is **NOT RECOMMENDED** however for testing and validation in the lab and while learning about this API we can use insecure mode. 
 
-# Model-Driven Telemetry
+To enable the gNMI insecure mode the following CLI is used. Insecure mode allows connections directly to the IP address of the device, however secure mode uses the DNS name of the device that is encoded into the SSL certificates. 
 
-Network data collection for today s high-density platforms and scale is becoming a tedious task for monitoring and troubleshooting. There is a need for operational data from different devices in the network to be collected in a centralized location, so that cross-functional groups can collaboratively work to analyze and fix an issue.
+In the lab envrionment's Ubuntu server the /etc/hosts file is used to create the local DNS resoltion for the lab machine, including the c9300 which is mapped to 10.1.1.5:
 
-**Model-driven Telemetry** (MDT) provides a mechanism to stream data from an MDT-capable device to a destination. It uses a new approach for network monitoring in which data is streamed from network devices continuously using a push model and provides near real-time access to operational statistics for monitoring data. Applications can subscribe to specific data items they need, by using standards-based YANG data models over open protocols. Structured data is published at a defined cadence or on-change, based upon the subscription criteria and data type.
-
-There are two main MDT Publication/Subscription models, Dial-in and Dial-out:
-
-**Dial-in** is a dynamic model. An application based on this model has to open a session to the network device and send one or more subscriptions reusing the same session. The network device will send the publications to the application for as long as the session stays up. **NETCONF** and **gNMI** are the Dial-In telemetry interfaces. 
-
-**Dial-out** is a configured model. The subscriptions need to be statically configured on the network device using any of the available interfaces (CLI, APIs, etc.) and the device will open a session with the application. If the session goes down, the device will try to open a new session. **gRPC** is the Dial-Out telemetry interface.
-
-![](1-pubsub.png)
-
-In this lab we cover the **gRPC Dial-out** telemetry that was released in IOS XE 16.10 along with the open source software stack for collection and visualization:
-
-- **Telegraf (Collection)** with the **cisco\_telemetry\_mdt** plugin that decodes the gRPC data to text
-- **InfluxDB (Storage)**: an open-source time series database optimized for fast, high-availability storage and retrieval of time series data in fields such as operations monitoring, application metrics, Internet of Things sensor data, and real-time analytics. It provides a SQL-like language with built-in time functions for querying a data structure composed of measurements, series, and points
-- **Grafana (GUI visualization)**: an open-source platform to build monitoring and analytics dashboards
-
-Every LAB POD includes a full installation of all the above-mentioned software.
-
-## Verify clock synchronization (optional - only required if troubleshooting)
-
-When collecting data from any source, a key requirement is a precise and reliable time reference. If the data source and the collector clocks are not aligned, the data becomes inaccurate and can lead to misleading interpretations of a system state.
-
-This lab relies on NTP (Network Time Protocol) to keep all the devices in sync with the Ubuntu Linux Server acting as NTP master. Ensure the NTP configuration is correct on the C9300 with the show clock command
-
-From the Windows Jump Host desktop, connect to each of the IOS XE devices and check that the current time is correct and that the NTP server is configured.
-
-
-### Ensure that the time is correct on the IOS XE devices
-```
-c9300# show clock
-...
-c9300# sh run | include ntp
-ntp server 10.1.1.3
-
-
-csr1000# show clock
-...
-csr1000# sh run | include ntp
-ntp server 10.1.1.3
-
-
-C9800# show clock
-...
-C9800# sh run | include ntp
-ntp server 10.1.1.3
-```
-
-### Ensure time is in-sync on Ubuntu
-Open a SSH connection to the Ubuntu and check NTP status and verify NTP is syncronized
-
-```
-auto@automation:~$ date
-
-Wed Oct 9 09:02:12 PDT 2029
-
-If required, manually set the time:
-
-$ sudo date +%Y%m%d -s "19990612"
-
-$ sudo date +%T -s  "09:00:00"
-```
-
-### Ensure time is correct in Windows
-Finally on the Windows Jump Host confirm the time is correct. In order to sync the time if it is not correct, right click on the time, select  "Adjust date\time", select the  "Internet Time" tab and then  "Change settings" then  "Update now"
-
-You may need to click  "Update now" several times before the Windows host is able to successful synchronize with the NTP time source.
-
-The time is in now sync across all hosts.
-
-![](2-ntp-on-windows.png)
-
-## NETCONF Dial-In Model Driven Telemetry
-
-Unlike the gRPC **(configured)**, the NETCONF Model Driven Telemetry interface needs only to be enabled within IOS XE - once enabled the Dial-In **(dynamic)** connection can be established from the tooling. 
-
-To enable the NETCONF use the following CLI. Refer to the **NETCONF** module for more details.
-
-```
-netconf-yang
-```
-
-NOTE: Enabling NETCONF-YANG is required for Model Driven Telemetry, even if gRPC or gNMI is the telemetry interface being used. 
-
-## gNMI Dial-In Model Driven Telemetry
-
-To enable the gNMI Dial-In Model Driven Telemetry interface use the following CLI's. Refer to the **gNMI** module for more details.
+![](./etc_hosts.png)
 
 ```
 gnmi-yang
 gnmi-yang server
 ```
 
-NOTE: This enables gNMI only in insecure mode. The CLI **gnmi-yang secure-server** enables the gNMI server in secure mode and requires TLS certificates to be loaded into IOS XE first. Refer to the **gNMI Module** for details on this configuration. gNMI insecure mode is used in the following examples.
+Note: The default insecure gNMI port is 50052 and can be changed with the **gnmi-yang port** CLI
 
 
-# gRPC Dial-Out Configured Subscriptions
-
-Lets continue by checking the subscriptions configured on the Catalyst 9300.
-
-Step 1. Open a SSH connection to the Catalyst 9300 switch
-
-Step 2. Check the subscription configured on the device using the following IOS XE CLI
-
-**C9300# show run | sec telemetry**
-
-![](3-showrunsectel.png)
-
-Lets analyze the main parts of the subscription configuration:
-
-- telemetry ietf subscription 101 (subscription ID)
-- encoding encode-kvgpb (Key-Value pair encoding)
-- filter xpath /process-cpu-ios-xe-oper:cpu-usage/cpu-utilization/five-seconds (xpath)
-- update-policy periodic 500 (period in 1/100 seconds, 5 secs here)
-- receiver ip address 10.1.1.3 57500 protocol grpc-tcp (receivers IP, port and protocol)
-
-This telemetry configuration has already been applied to the switch. However, if it needs to be re-applied the following can be used to easily copy/paste:
+The process to enable the secure API is a 4 step process where the SSL certificates are generated using OpenSSL then installed into the IOS XE trustpoint. Next the gNMI API can be enabled using the trustpoint and certificates from the previous steps, and now the API is ready for secure communication using YANGSuite, Python, Go, or any other tooling. It is important to remember that when used in secure mode the **IP address is not used as the certificate is tied to the DNS name of 'c9300'.** Secure connections to the IP address will fail, so ensure the DNS name is used when connecting.
 
 ```
-conf t
-telemetry ietf subscription 101
-encoding encode-kvgpb
-filter xpath /process-cpu-ios-xe-oper:cpu-usage/cpu-utilization/five-seconds
-source-address 10.1.1.5
-stream yang-push
-update-policy periodic 500
-receiver ip address 10.1.1.3 57500 protocol grpc-tcp
+Step 1. Create SSL certificates
+Step 2. Install certificates into IOS XE trustpoint
+Step 3. Enable secure gNMI
+Step 4. Connect and vlidate with tooling + cert
+```
+![](secure_gnmi_quickstart.png)
+
+The IOS XE 16.12 configuration guide has details for creating and enabling gNMI - Refer to [https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/prog/configuration/1612/b_1612_programmability_cg/grpc_network_management_interface.html#id_89031](https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/prog/configuration/1612/b_1612_programmability_cg/grpc_network_management_interface.html#id_89031) if needed.
+
+### Step 1
+
+Using the gen_certs.sh script from the Cisco Innovation Edge github at [https://raw.githubusercontent.com/cisco-ie/cisco-gnmi-python/master/scripts/gen_certs.sh](https://raw.githubusercontent.com/cisco-ie/cisco-gnmi-python/master/scripts/gen_certs.sh) we can easily generate the certificates
+
+To generate the certifcation lets follow these steps:
 
 ```
-
-Step 3. Verify the configured subscription using the following **telemetry** IOS XE CLIs
-
-**c9300# sh telemetry ietf subscription all**
-
+cd ~/gnmi/ssl/
+# rm -f *	# This will remove any old certs and files!
+wget https://raw.githubusercontent.com/cisco-ie/cisco-gnmi-python/master/scripts/gen_certs.sh
+bash gen_certs.sh
+bash gen_certs.sh c9300 10.1.1.5 Cisco12345
 ```
 
-Telemetry subscription brief
+![](gen_certs.png)
 
-ID               Type        State       Filter type
------------------------------------------------------
-101              Configured  Valid       xpath
+### Step 2
 
-```
+Now that the certificates are generated they need to be installed into the IOS XE device using the **crypto pki import** commands. Alternatley the [Cisco-IOS-XE-crypto-oper](https://github.com/YangModels/yang/blob/master/vendor/cisco/xe/1721/Cisco-IOS-XE-crypto-oper.yang) YANG file can be used to programmatically install the certificate via the API's
 
+Execute the **ls** command to list the certificate files and use **cat** to read the file out to screen
 
-**c9300# sh telemetry ietf subscription 101 detail**
+![](ls_certs.png)
 
-```
-Telemetry subscription detail:
+Next install/load the certificates into the trustpoint. Connect to the switch and follow the porocedure below to load the certificate into the trustpoint:
 
-Subscription ID: 101
-Type: Configured
-State: Valid
-Stream: yang-push
-Filter:
-Filter type: xpath
-XPath: /process-cpu-ios-xe-oper:cpu-usage/cpu-utilization/five-seconds
-Update policy:
-Update Trigger: periodic
-Period: 500
-Encoding: encode-kvgpb
-Source VRF:
-Source Address: 10.1.1.5
-Notes:
+**configure terminal**
 
-Receivers:
-Address          Port             Protocol         Protocol Profil
-------------------------------------------------------------------
-10.1.1.3         57500            grpc-tcp
+**crypto pki import trustpoint1 pem terminal password Cisco123**
+
+Copy and paste the certificates as noted below: **rootCA.pem, devices.des3.key, and device.crt**
 
 ```
+C9300# configure terminal
+C9300(config)# crypto pki import trustpoint1 pem terminal password Cisco123 
+ 
+# Send contents of rootCA.pem, followed by newline + 'quit' + newline:
+-----BEGIN CERTIFICATE-----
+<snip>
+-----END CERTIFICATE-----
 
-**c9300# sh telemetry ietf subscription 101 receiver**
+# Send contents of device.des3.key, followed by newline + 'quit' + newline:
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+<snip>
+-----END RSA PRIVATE KEY-----
 
-```
-Telemetry subscription receivers detail:
-
-Subscription ID: 101
-Address: 10.1.1.3
-Port: 57500
-Protocol: grpc-tcp
-Profile:
-State: Connected
-Explanation:
-```
-
-
-The State should report **Connected**.
-
-If that state does not show Connected, for example, if it is the  "Connecting " state, then simple remove and re-add the telemetry configuration before continuing with the next steps and troubleshooting:
-
-```
-conf t
-no telemetry ietf subscription 101
-telemetry ietf subscription 101
-encoding encode-kvgpb
-filter xpath /process-cpu-ios-xe-oper:cpu-usage/cpu-utilization/five-seconds
-source-address 10.1.1.5
-stream yang-push
-update-policy periodic 500
-receiver ip address 10.1.1.3 57500 protocol grpc-tcp
+# Send contents of device.crt, followed by newline + 'quit' + newline:
+-----BEGIN CERTIFICATE-----
+<snip>
+-----END CERTIFICATE-----
 ```
 
-Note: If the state does not show  "Connected" then ensure the Docker container with the Telegraf receiver is running correctly. Follow the next steps to confirm status of each component.
-
-
-## Telegraf, Influx, Grafana (TIG)
-
-![](4-mdt-solution.png)
-
-Telegraf is the tool that receives and decodes the telemetry data that is sent from the IOS XE devices. It processes the data and sends it into the InfluxDB datastore, where Grafana can access it in order to create visualizations.
-
-Telegraf runs inside the  "tig_mdt" Docker container. To connect to this container from the Ubuntu host follow the steps below:
+Now that the certificate is loaded there is one more step to configure the revocation-check on the trustpoint:
 
 ```
-auto@automation:~$ docker ps
+C9300(config)# crypto pki trustpoint gnmitrustpoint1
+C9300(ca-trustpoint)# revocation-check none
+C9300(ca-trustpoint)# end
 ```
 
-![](5-docker_ps.png)
+![](./install_certs.gif)
+
+Finally we can review details of the trustpoint using the **show crypto pki trustpoints** CLI's
 
 ```
-auto@automation:~$ docker exec -it tig_mdt /bin/bash
-
- <You are now within the Docker container>
-
-# cd /root/telegraf
-# ls
+show crypto pki trustpoints  | i Trustpoint
+show crypto pki trustpoints
 ```
 
-There is one file for each telemetry interface: **NETCONF**, **gRPC**, and **gNMI**. Review each file to understand which. YANG data is being collected by which interface.
+![](./show_tp.png)
+
+### Step 3
+
+Next the gnmi-yang server is configured to use the newly installed trustpoint and associated certificates, using the **gnmi-yang secure-trustpoint gnmitrustpoint1** CLI:
 
 ```
-# cat telegraf-grpc.conf
-# cat telegraf-gnmi.conf
-# cat telegraf-netconf.conf
+gnmi-yang
+gnmi-yang secure-trustpoint gnmitrustpoint1
+gnmi-yang secure-server
 ```
 
-![](6-docker_exec_cat_grpc.png)
+Note: The default insecure gNMI port is 50051 and can be change with the **gnmi-yang secure-port** CLI
 
-Inside the Docker container navigate to the telegraf directory and review the configuration file and log by tailing the log file with the command **tail -F /tmp/telegraf-grpc.log** 
+### Step 4
 
-The **telegraf-grpc.conf** configuration file shows us the following:
-
-**gRPC Dial-Out Telemetry Input:** This defines the telegraf plugin (cisco\_telemetry\_mdt) that is being used to receive the data, as well as the port (57500)
-
-**Output Plugin:** This defines where the received data is sent to (outputs.influxdb) the database to use (telegraf) and the URL for InfluxDB ([http://127.0.0.1:8086](http://127.0.0.1:8086/))
-
-**Outputs.file** : sends a copy of the data to the text file at /root/telegraf/telegraf.log
-
-These configuration options are defined as per the README file in each of the respective input or output plugins. For more details of the cisco_telemetry_mdt plugin that is in use here, see the page at ["https://github.com/influxdata/telegraf/tree/master/plugins/inputs/cisco_telemetry_mdt"]("https://github.com/influxdata/telegraf/tree/master/plugins/inputs/cisco_telemetry_mdt")
-
-Examining the output of the telegraf.log file shows the data coming in from the IOS XE device that matches the subscription we created and do ctrl+c to stop the output
-
-**# tail -F /tmp/telegraf.log**
-
-![](7-cat_telegraf_grpc.png)
-
-## The Influx Database (influxdb)
+Eplore the tooling in the next section that can be used to now connect to the gNMI API securely using the certificates and trustpoint configuration that has ben enabled.
 
 
-InfluxDB is already installed and started within the same Docker container. Lets verify it s working correctly by connecting into the Docker contain where it is running.
+# NEED HELP - with below 17.2.1 xml2json error (?)
 
-Step 1. Verify InfluxDB is running with the command **ps xa | grep influx**
+## Tooling
+
+### YANGSuite (NOT WORKING ?)
+
+The YANGSuite GUI based tooling is used to visually interact with the gNMI API. Follow the workflow below to build and run the RPC.
+
+![](./yangsuite_gnmi_get.png)
+
+### py_gnmi_cli.py (NOT WORKING ?)
+
+The gnxi tooling is available from the Google Github repository and can be used for validation of the gNMI API on the C9300 switch for sending payloads and for retreiving operational data. Download and install the tooling with the following commands from the Ubunut SSH:
 
 ```
-15 pts/0 Sl+ 1:45 /usr/bin/influxd -pidfile /var/run/influxdb/influxd.pid -config /etc/influxdb/influxdb.conf
+$ git clone https://github.com/google/gnxi.git
+$ virtualenv venv --no-site-packages --no-download
+. venv/bin/activate
+cd gnxi/gnmi_cli_py/
+pip install -r requirements.txt
 ```
 
-Step 2. Verify the data stored on the Influx database using the command shown below:
+After the git glone and pip install complete the next step is to run the py_gnmicli.py tool.
+
+![](./git_gnxi.png)
+
+The py_gnmicli.py script can be used to easily read the interface details from the IOS XE gNMI API with the following command and option flags:
 
 ```
-root@43f8666d9ce0:~# influx
-Connected to http://localhost:8086 version 1.7.7
-InfluxDB shell version: 1.7.7
-> show databases
-name: databases
-name
-----
-_internal
-mdt_gnmi
-mdt_grpc
-cisco_mdt
-mdt_netconf
->
-> drop database cisco_mdt
-> quit
-root@43f8666d9ce0:~#
-root@43f8666d9ce0:~#
-root@43f8666d9ce0:~#
-root@43f8666d9ce0:~#
-root@43f8666d9ce0:~#
-root@43f8666d9ce0:~#
-root@43f8666d9ce0:~# influx
-Connected to http://localhost:8086 version 1.7.7
-InfluxDB shell version: 1.7.7
->
-> show databases
-name: databases
-name
-----
-_internal
-mdt_gnmi
-mdt_grpc
-mdt_netconf
->
-> use mdt_grpc
-Using database mdt_grpc
-> show measurements
-name: measurements
-name
-----
-Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization
->
-> SELECT COUNT("five_seconds") FROM "Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization"
-name: Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization
-time count
----- -----
-0    1134
->
+python2 py_gnmicli.py -m get -t c9300 -p 50051 -x /interfaces/interface --cert_chain ~/gnmi/ssl/certs/client.crt --root_cert ~/gnmi/ssl/certs/rootCA.pem --private_key ~/gnmi/ssl/certs/client.key -user admin -pass Cisco123
 ```
 
-The output above shows:
+![](./pygnmicli_get.png)
 
-- a **telegraf** dababase as defined in the Telegraf config file which holds that telemry data
-- one measurement defined as the YANG model used for the gRPC Dial-out subscription (Cisco-IOS-XE-process-cpu-oper:cpu-usage/cpu-utilization)
-- number of publications received so far (33251).
+### Docker with py_gnmi_cli.py (NOT WORKING ?)
 
-![](8-influx.png)
-
-# Grafana Dashboard
-
-Grafana is an open-source platform to build monitoring and analytics dashboards that also runs within the Docker container. Navigating to the web based user interface allows us to see the dashboard with the Model Driven Telemetry data
-
-Verify Grafana is running: with the following command: **ps xa | grep grafana**
+We can also pull a Docker image that has the py_gnmi_cli.py script with a simple 1-liner command:
 
 ```
-44 ? Sl 0:32 /usr/sbin/grafana-server --pidfile=/var/run/grafana-server.pid --config=/etc/grafana/grafana.ini --packaging=deb cfg:default.paths.provisioning=/etc/grafana/provisioning cfg:default.paths.data=/var/lib/grafana cfg:default.paths.logs=/var/log/grafan cfg:default.paths.plugins=/var/lib/grafana/plugins**
+docker run --rm -it mike909/py_gnmicli:v0.4 python /gnxi/gnmi_cli_py/py_gnmicli.py -t 10.1.1.5 -m get -u admin -p Cisco123 -x /interfaces/interface -p 50052 -n
+``` 
+
+Using the YANGSUite and py_gnmi_cli.py tooling we have successfully sent the GET operation to the gNMI API to retreive interface state and configuration details.
+
+## Use Cases and examples (NOT TESTED ?!)
+
+Use the set-update operation to create a new loopback interface with the **py_gnmicli.py** script:
+
+```
+python py_gnmicli.py -m set-update -t jcohoe-cat9300.cisco.com -p 9339 -x /interfaces/ --cert_chain ./client.crt --root_cert ./rootCA.pem --private_key client.key -user cisco -pass cisco -val @payload_4_set_loopback.json
 ```
 
-Step 1. Open Firefox or Chrome and access the interface Grafana at [http://10.1.1.3:3000](http://10.1.1.3:3000/)
+Review the payload to create the loopback interface: **cat payload_4_set_loopback.json**
+```
+{
+	"interface": [
+		{
+			"name": "Loopback6",
+			"config": {
+				"name" : "Loopback6",
+				"type" : "iana-if-type:softwareLoopback",
+				"description": "TESTING"
+			}
+		},
+		{
+			"name": "Loopback7",
+			"config": {
+				"name" : "Loopback7",
+				"type" : "iana-if-type:softwareLoopback",
+				"description": "TESTING"
+			}
+		}
+	]
+}
+```
 
-You should see the following dashboard after logging in with admin:Cisco123
+Using the py_gnmi_cli.py tooling we have successfully sent the SET operation to the gNMI API to create a new loopback interface.
 
-![](9-grafana-grpc.png)
 
-To better understand the Grafana dashboard, lets edit the dashlet to see which data is being displayed:
 
-Step 2. Access the Grafan UI on HTT port 3000
-Step 3. Click the **"CPU Utilization"** drop-down and then select **"Edit "**
 
-![](9b-grafana-edit.png)
 
-Step 4. Review the information this is pre-configured for this particular chart, specifically the FROM and SELECT sections
-
-![](9c-grafana-details.png)
-
-# Conclusion
-
-This module has shown how to configure the gRPC Dial Out configured telemetry feature on IOS XE. Using the Docker container with the open-source Telegraf + InfluxDB + Grafana stack you were able to receive, store, and visualize the telemetry information.
-	
