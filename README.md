@@ -72,7 +72,8 @@ Using the gen_certs.sh script from the Cisco Innovation Edge github at [https://
 To generate the certifcation lets follow these steps:
 
 ```
-cd ~/gnmi/ssl/
+mkdir -p ~/gnmi_ssl/
+cd ~/gnmi_ssl/
 # rm -f *	# This will remove any old certs and files!
 wget https://raw.githubusercontent.com/cisco-ie/cisco-gnmi-python/master/scripts/gen_certs.sh
 bash gen_certs.sh
@@ -93,13 +94,13 @@ Next install/load the certificates into the trustpoint. Connect to the switch an
 
 **configure terminal**
 
-**crypto pki import trustpoint1 pem terminal password Cisco123**
+**crypto pki import gnmitrustpoint1 pem terminal password Cisco12345**
 
 Copy and paste the certificates as noted below: **rootCA.pem, devices.des3.key, and device.crt**
 
 ```
 C9300# configure terminal
-C9300(config)# crypto pki import trustpoint1 pem terminal password Cisco123 
+C9300(config)# crypto pki import gnmitrustpoint1 pem terminal password Cisco123 
  
 # Send contents of rootCA.pem, followed by newline + 'quit' + newline:
 -----BEGIN CERTIFICATE-----
@@ -127,6 +128,90 @@ C9300(ca-trustpoint)# end
 ```
 
 ![](./install_certs.gif)
+
+Successfull installation of the trustpoint will look similar to the following:
+
+```
+C9300(config)#crypto pki import gnmitrustpoint1 pem terminal password Cisco12345
+% Enter PEM-formatted CA certificate.
+% End with a blank line or "quit" on a line by itself.
+-----BEGIN CERTIFICATE-----
+MIIC9TCCAd2gAwIBAgIJAO2qa89hrH7BMA0GCSqGSIb3DQEBCwUAMBExDzANBgNV
+BAMMBnJvb3RDQTAeFw0yMDA2MjMyMTI0MTBaFw0yMzA2MjMyMTI0MTBaMBExDzAN
+BgNVBAMMBnJvb3RDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK05
+gXrbe/zYD8EHOviUDap8/Ww59hq6NV47B3UZWOLRyPO7Pj7HElWyu882LnYo4ot+
+oaJBcBTB0gcukzrZPrxQH/xmepgs4B0WaTwHjxqycwK7HpIwcHy4PF/OfmMK5ZlT
+6ZtVKTyW73G6i9vzrqTi6dY0g0eeNrkclvXM98rqbH2YxRp+PfmoKLBo0+wfQKhB
+jshM2uqv08mQylta0CA8410jLpbWjxJiklOUT8/XtlUsny2itEmjeB2mCECh22tY
+DqLf++G/vaURiI09T5BL2a/5KW/cvXPgs9o7SRXPiHIlTjG6HoXHNQ1CHhogugYm
+lT3Q3+MqENaZMq6ZhIMCAwEAAaNQME4wHQYDVR0OBBYEFDfaecuAWI7BKQfZ+9qw
+wHqN71bPMB8GA1UdIwQYMBaAFDfaecuAWI7BKQfZ+9qwwHqN71bPMAwGA1UdEwQF
+MAMBAf8wDQYJKoZIhvcNAQELBQADggEBAG8ntz5E6QfWspNvx18lJX+Q3hF4SFCS
+V+EOyR/qyPGdxPdN4V/kdW1FNQAkgWh8CqtqDlN4FtKrP+LHwt14EnMbYDrQvEgA
+4T1pmKC4+lXBrThqhU0zGTYg7gPimQFclXrhN3nCmSAnTydoFud+h6kVMnTjwAIp
+WD/004kLbceOJlTbyEBOQNY5bNZHV33AVh4tEgnwHnEm8xEtQqvAniBcsy4DCfD4
+ebwdkzHd5V+xHODvt01E30LdyhAr1WZ2KYcVkdwVLB4KjD73HFY9UvPzDI3ab0cd
+q1RiAqukECtALuuVKzWJIVRKmD0ticd80+m14Xv64WsqMFa+vSor8m4=
+-----END CERTIFICATE-----
+
+% Enter PEM-formatted encrypted private General Purpose key.
+% End with "quit" on a line by itself.
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: DES-EDE3-CBC,D9A4A365DDFBFBF6
+
++Qnn5cT53jekoY3rzlCjjMJGGw3cNaSMBfR0hMwB83jrxlOleRuwjvRxTdTMXOBJ
+604uMalGtGjkYSJBDoelHaDiVJhZsehoWRt7L1/54T/dn85poCYsISasIQf2b7sG
+1lxeZDLU6HSQUynsgVManZqPR6wqdrLWNTXp8ghR8r8jRHzmiXWEsLkAI/OU+Pg8
+BHJW683WZc0lH5cje9bowRIIhXowKDZ3q77ZRI4hVaUDtEOSInbKYZHd3XsvCCqq
+RAgH+Vr1JxqRZe9TMFViveEf4rnWMUDyhI03h7kugHmUdfiYefSaLxcIL4KryrN4
+UoUZ9USWqscVIgXzsza17wFRYe63h+rFPRha3ul1/r+V+t1An+Ljnw4TZeHrt19s
+IB4E9/TbOGnn1SONHjYD+s3bYybL0q1K4uA8w6lBaH3IxaLBYWNg1Ay6HqyG5TCg
+LlaM+RNV4NgtXVd9XiXr8wzyGsvgkOAvE999ZhLUp3R70ytzN+Z5/QeYIm1z14JT
+OLx/Vh9XscbmI26aQXMk+7HHpquGv597IzV3SVtIemHwwHVGpNZR+DiXOWLYt8nb
+sBjOvcbKHchtMPfkk5jggUE7xo/zV+GVKff7lFsidbhAHfBImcpQoE7Bj8lv4XXE
+RPZQiKpTiuUa6P934udlWp4Ic3iYcNI8s9lfYth4Znzh/nXyQ25f6hSabu6jqpHs
+OnWi4GpP1Z+1R6e2DkD1td6Czlo9crtZtFYv7QlFX/ETNQKGa1LFNNRwEH1j6CMU
++4o59yv7ZSef+byKGTIM8AHIIJCgqOHO3HuE620hOZfeTKP9rCvmpIDARLNcimj2
+JKDV5Cc64yikfC18dmzO74hzXN8bIUfqkagyezewbJZGTVO9vpSiQf37YpC3+wlg
+5X00KbDY4//9GdFv7cZNZwzml++5e4kt1BN+aX5qqIy+JEHniCxsenixCCGcJRGu
+OBvGYbsIT5ojkarU/+WvQR2yRvUGNJAZ0qoWm4pfNsc+2tZAsfnc2UakcP3EPfKb
+BGpaC0SYALWeZQN59nh9bqAZXh46gbU3wuMvk2GiPm7x22yY/WVwM7fpILX3Dl8h
+7rSTptsMXV9cFJSiw7IpI2z/pOC+wBnVho2DmnjXJ7wYrZLsI2/qIZ2tnY5bb/oV
+oczpdGF2iyLMFkjmRWhsYuhxFZfEc+4u4dchv4h91YiPLNpyXffzjFDtDarPY6qk
+8K48apdz1F8+1yxd6HwktF7neuZi4YAVIklOjRzmPPIWyGJ3rRiiiTfi6y5AmGRm
+PxGjn2wSuxUvy6GKlPPOqtmNGlAMdC8cBBMkYjnmjRgJpA3BhVW+VHyrhdVqVBfu
+AtqWH7O/myCG1StLYrnS+M9Zx44EzpXI0QyQrv20tnw5OpgCDL8hf7UsNCeRe+Oy
+YX0yPiD9kIi/kSF4hHi1ewb49syi+uk3bHaaFvnwByadz8xeBv9OT96K5abPOA+J
+OX3vecbZ0U0k6/yx4CFfVZIY25gjASz2CboHDWEpOd3ANlNUIls02KqpQUZzuUr3
+f9mOpYi+CAZIAL73zKBhLW21wUpNw+GvColL79qMnzLys4oXYb9bPA==
+-----END RSA PRIVATE KEY-----
+
+quit
+% Enter PEM-formatted General Purpose certificate.
+% End with a blank line or "quit" on a line by itself.
+-----BEGIN CERTIFICATE-----
+MIICvjCCAaagAwIBAgIJAOT1FV1fb9rbMA0GCSqGSIb3DQEBCwUAMBExDzANBgNV
+BAMMBnJvb3RDQTAeFw0yMDA2MjMyMTI0MTBaFw0yMzA2MjMyMTI0MTBaMBAxDjAM
+BgNVBAMMBWM5MzAwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsVFD
+GSCLz0CGJ3E6tXb/pkFq4PyXZ01iHfs64wPuNRHqs9tURgQGhgvoUB3xCiRAY9+6
+bszmEKN6kT99dlg624OSGmwP0YC8LT3srzBzo/iozg9VTkuYhsBkdsaMdixbHxC1
+IA8xvY19tTtAKzQeGxFycXRG3h6+o7GuTF/g74em0fr+ZA7AA2XBjiFTdXyqkWnV
+n6Lm7fu3piBLv3zfuvIBr3XLdGyvD47Jh8LYotlAHEHuliLz0YdrCttl1HSPUQI8
+ZQverfUhjv2HomtF+mA+bpNZ9aZInKXi9bNXXvYjEAUqdRV1xqQpNhx+dJ+71Uly
+0nKnSdQceeUysXDstQIDAQABoxowGDAWBgNVHREEDzANggVjOTMwMIcECgEBBTAN
+BgkqhkiG9w0BAQsFAAOCAQEAiwABMx0adfGoObHAA9RxOVIMhIT+za769gU0ARqU
+g6pruZK4eqBLNpFXO+/jJ/XaC2WZi2Fh832OM9569Q+cFtMFm4hBkRhXYh5koWuE
+eb0TvlnOjDx1UO8wf68bky8WLrkEFz6NxCnaMDhB0HrL9PYGCUEe6f4SmuILnnfA
+wNa6oksCx1nYDQTaG54dWBQl9so2Kf6SsBFUyXdaQP24Rb6zCD+n2pU1ebYBTpzE
+Fd0NcKAnLaY+OwYhsQ2OoKXz4rceUEt9g7hlevHJptJUY4CP6oK/QC7Q1795qTXO
+7H3ZQbfut+YNEnIze5/GPd2TnDkTczuvn+fxs9B8XTbn9w==
+-----END CERTIFICATE-----
+
+% PEM files import succeeded.
+C9300(config)#
+Jun 23 21:25:16.885: %CRYPTO_ENGINE-5-KEY_ADDITION: A key named gnmitrustpoint1 has been generated or imported by pki
+```
 
 Finally we can review details of the trustpoint using the **show crypto pki trustpoints** CLI's
 
@@ -157,7 +242,7 @@ Eplore the tooling in the next section that can be used to now connect to the gN
 
 ## Tooling
 
-### YANGSuite
+### YANGSuite with the gNMI Insecure Server on port 50052
 
 The YANGSuite GUI based tooling is used to visually interact with the gNMI API. Refer to the NETCONF/YANG module for details of YANGSuite workflows.
 
@@ -250,73 +335,95 @@ The completed workflow will look similar to the following:
 
 ![](yangsuite_get_vlan1.gif)
 
-### py_gnmi_cli.py ( STOP HERE - CONTINUE WORKING ON THIS PART DOWN )
+### gnmi_cli with TLS and the gNMI secure-server on port 9339
 
-The gnxi tooling is available from the Google Github repository and can be used for validation of the gNMI API on the C9300 switch for sending payloads and for retreiving operational data. Download and install the tooling with the following commands from the Ubunut SSH:
+The GNMI_CLI tooling is available from [https://github.com/openconfig/gnmi](https://github.com/openconfig/gnmi) and has already been installed in the lab envrionment's Ubuntu VM using the following workflow.
 
-```
-$ git clone https://github.com/google/gnxi.git
-$ virtualenv venv --no-site-packages --no-download
-. venv/bin/activate
-cd gnxi/gnmi_cli_py/
-pip install -r requirements.txt
-```
-
-After the git glone and pip install complete the next step is to run the py_gnmicli.py tool.
-
-![](./git_gnxi.png)
-
-The py_gnmicli.py script can be used to easily read the interface details from the IOS XE gNMI API with the following command and option flags:
+1. Download the go version 1.14 from https://golang.org/dl/
+2. Untar the file
+3. Move it to /usr/local
+4. Set the GOROOT variable
+5. Set the PATH variable to include the GOROOT bin
+6. "Go get" gnmi_cli from Github
 
 ```
-python2 py_gnmicli.py -m get -t c9300 -p 50051 -x /interfaces/interface --cert_chain ~/gnmi/ssl/certs/client.crt --root_cert ~/gnmi/ssl/certs/rootCA.pem --private_key ~/gnmi/ssl/certs/client.key -user admin -pass Cisco123
+wget https://dl.google.com/go/go1.14.4.linux-amd64.tar.gz
+tar xvfz go1.14.4.linux-amd64.tar.gz
+sudo mv go /usr/local/
+export GOROOT=/usr/local/go
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+go get -u github.com/openconfig/gnmi/cmd/gnmi_cli
 ```
 
-![](./pygnmicli_get.png)
-
-### Docker with py_gnmi_cli.py (NOT WORKING ?)
-
-We can also pull a Docker image that has the py_gnmi_cli.py script with a simple 1-liner command:
+The gnmi_cli tool has been installed and is ready for use:
 
 ```
-docker run --rm -it mike909/py_gnmicli:v0.4 python /gnxi/gnmi_cli_py/py_gnmicli.py -t 10.1.1.5 -m get -u admin -p Cisco123 -x /interfaces/interface -p 50052 -n
-``` 
-
-Using the YANGSUite and py_gnmi_cli.py tooling we have successfully sent the GET operation to the gNMI API to retreive interface state and configuration details.
-
-## Use Cases and examples (NOT TESTED ?!)
-
-Use the set-update operation to create a new loopback interface with the **py_gnmicli.py** script:
-
-```
-python py_gnmicli.py -m set-update -t jcohoe-cat9300.cisco.com -p 9339 -x /interfaces/ --cert_chain ./client.crt --root_cert ./rootCA.pem --private_key client.key -user cisco -pass cisco -val @payload_4_set_loopback.json
+auto@automation:~$ gnmi_cli --help
 ```
 
-Review the payload to create the loopback interface: **cat payload_4_set_loopback.json**
+![](gnmi_cli_help.png)
+
+A GET operation to retreive the device hostname can be sent using the following **gnmi_cli** command.
+
 ```
-{
-	"interface": [
-		{
-			"name": "Loopback6",
-			"config": {
-				"name" : "Loopback6",
-				"type" : "iana-if-type:softwareLoopback",
-				"description": "TESTING"
-			}
-		},
-		{
-			"name": "Loopback7",
-			"config": {
-				"name" : "Loopback7",
-				"type" : "iana-if-type:softwareLoopback",
-				"description": "TESTING"
-			}
-		}
-	]
-}
+auto@automation:~$ cd ~/gnmi_ssl/certs/
+auto@automation:~/gnmi_ssl/certs$ gnmi_cli -address 10.1.1.5:9339 -server_name c9300 -with_user_pass -timeout 10s -get \
+-ca_crt rootCA.pem -client_crt client.crt -client_key client.key \
+-proto "$(cat ~/gnmi_proto/get_hostname.txt)"
 ```
 
-Using the py_gnmi_cli.py tooling we have successfully sent the SET operation to the gNMI API to create a new loopback interface.
+In this example the payload is defined with the -proto flag and contains the folowing YANG modeled data
+
+![](yangsuite_explore_oc_system.png)
+
+The get_hostname.txt proto file defines which YANG data model and elements to retreive:
+
+```
+auto@automation:~$ cat ~/gnmi_proto/get_hostname.txt
+path: <
+  elem: <
+    name: "system"
+  >
+  elem: <
+    name: "config"
+  >
+  elem: <
+    name: "hostname"
+  >
+>
+encoding: JSON_IETF
+auto@automation:~$
+```
+
+The gNMI secure server replies with the resulting payload:
+
+```
+  timestamp: 1592947803699765348
+  update: <
+    path: <
+      elem: <
+        name: "system"
+      >
+      elem: <
+        name: "config"
+      >
+      elem: <
+        name: "hostname"
+      >
+    >
+    val: <
+      json_ietf_val: "\"C9300\""
+    >
+  >
+>
+
+```
+
+The complete workflow should look similar to the following:
+
+![](gnmi_cli_get_hostname.gif)
+
+
 
 
 
