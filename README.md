@@ -98,6 +98,22 @@ Next install/load the certificates into the trustpoint. Connect to the switch an
 
 **configure terminal**
 
+
+NOTE: It may be required to remove the previous trustpoint with the following CLI
+
+**no crypto pki trustpoint trustpoint1**
+
+```
+C9300(config)#no crypto pki trustpoint trustpoint1
+% Removing an enrolled trustpoint will destroy all certificates
+ received from the related Certificate Authority.
+
+Are you sure you want to do this? [yes/no]: yes
+% Be sure to ask the CA administrator to revoke your certificates.
+```
+
+Create the new trustpoint:
+
 **crypto pki import gnmitrustpoint1 pem terminal password Cisco12345**
 
 Copy and paste the certificates as noted below: **rootCA.pem, devices.des3.key, and device.crt**
@@ -430,10 +446,4 @@ The complete workflow should look similar to the following:
 ## Conclusion
 
 In this module the gNMI YANG Model Driven Programmatic interface (API) has been configured and enabled in both secure and non-secure modes. The YANGSuite and gNMI_cli tools have been used to interact with the gNMI API interface using the GUI and CLI based tooling to perform basic GET operations.
-
-
-
-
-
-
 
