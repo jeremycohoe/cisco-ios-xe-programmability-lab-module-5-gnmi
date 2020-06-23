@@ -120,7 +120,7 @@ Copy and paste the certificates as noted below: **rootCA.pem, devices.des3.key, 
 
 ```
 C9300# configure terminal
-C9300(config)# crypto pki import gnmitrustpoint1 pem terminal password Cisco123 
+C9300(config)# crypto pki import gnmitrustpoint1 pem terminal password Cisco12345 
  
 # Send contents of rootCA.pem, followed by newline + 'quit' + newline:
 -----BEGIN CERTIFICATE-----
