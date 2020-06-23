@@ -67,7 +67,7 @@ The IOS XE 16.12 configuration guide has details for creating and enabling gNMI 
 
 ### Step 1
 
-Using the gen_certs.sh script from the Cisco Innovation Edge github at [https://raw.githubusercontent.com/cisco-ie/cisco-gnmi-python/master/scripts/gen_certs.sh](https://raw.githubusercontent.com/cisco-ie/cisco-gnmi-python/master/scripts/gen_certs.sh) we can easily generate the certificates
+Using the gen_certs.sh script from the Cisco Innovation Edge github at [https://raw.githubusercontent.com/cisco-ie/cisco-gnmi-python/master/scripts/gen_certs.sh](https://raw.githubusercontent.com/cisco-ie/cisco-gnmi-python/master/scripts/gen_certs.sh) we can easily generate the certificates. This script follows the steps that are outlined in the above IOS XE 16.12 Programmability Configuration Guide link.
 
 To generate the certifcation lets follow these steps:
 
@@ -89,6 +89,10 @@ Now that the certificates are generated they need to be installed into the IOS X
 Execute the **ls** command to list the certificate files and use **cat** to read the file out to screen
 
 ![](ls_certs.png)
+
+You will need to copy and paste the following 3 certificates, so it is recomennded to cat out each file now using the following commands:
+
+
 
 Next install/load the certificates into the trustpoint. Connect to the switch and follow the porocedure below to load the certificate into the trustpoint:
 
