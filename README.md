@@ -101,10 +101,10 @@ Next install/load the certificates into the trustpoint. Connect to the switch an
 
 NOTE: It may be required to remove the previous trustpoint with the following CLI
 
-**no crypto pki trustpoint trustpoint1**
+**no crypto pki trustpoint gnmitrustpoint1**
 
 ```
-C9300(config)#no crypto pki trustpoint trustpoint1
+C9300(config)#no crypto pki trustpoint gnmitrustpoint1
 % Removing an enrolled trustpoint will destroy all certificates
  received from the related Certificate Authority.
 
@@ -446,4 +446,10 @@ The complete workflow should look similar to the following:
 ## Conclusion
 
 In this module the gNMI YANG Model Driven Programmatic interface (API) has been configured and enabled in both secure and non-secure modes. The YANGSuite and gNMI_cli tools have been used to interact with the gNMI API interface using the GUI and CLI based tooling to perform basic GET operations.
+
+
+
+
+
+
 
