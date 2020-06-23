@@ -322,7 +322,7 @@ The gRPC payload above in then sent to the gNMI server that replies with the fol
 }
 ```
 
-The actual payload is in the val/jason_ietf_val key-value pair
+The payload with the interface configuration and state data is in the **val/jason_ietf_val key-value pair** as hilighted below. The YANG modeled counters and state data, including **enabled state, interface type, infex, admin-status, etc**.
 
 ```
 "val": {
@@ -380,7 +380,7 @@ In this example the payload is defined with the -proto flag and contains the fol
 
 ![](yangsuite_explore_oc_system.png)
 
-The get_hostname.txt proto file defines which YANG data model and elements to retreive:
+The **get_hostname.txt** proto file defines which YANG data model and elements to retreive:
 
 ```
 auto@automation:~$ cat ~/gnmi_proto/get_hostname.txt
@@ -426,6 +426,10 @@ The gNMI secure server replies with the resulting payload:
 The complete workflow should look similar to the following:
 
 ![](gnmi_cli_get_hostname.gif)
+
+## Conclusion
+
+In this module the gNMI YANG Model Driven Programmatic interface (API) has been configured and enabled in both secure and non-secure modes. The YANGSuite and gNMI_cli tools have been used to interact with the gNMI API interface using the GUI and CLI based tooling to perform basic GET operations.
 
 
 
