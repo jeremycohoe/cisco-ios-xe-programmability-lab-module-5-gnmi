@@ -246,6 +246,10 @@ The actual payload is in the val/jason_ietf_val key-value pair
 ```
 
 
+The completed workflow will look similar to the following:
+
+![](yangsuite_get_vlan1.gif)
+
 ### py_gnmi_cli.py ( STOP HERE - CONTINUE WORKING ON THIS PART DOWN )
 
 The gnxi tooling is available from the Google Github repository and can be used for validation of the gNMI API on the C9300 switch for sending payloads and for retreiving operational data. Download and install the tooling with the following commands from the Ubunut SSH:
