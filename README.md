@@ -30,7 +30,7 @@ All of the programmatic interfaces (NETCONF, RESTCONF, gNMI, and gRPC) share the
 
 ![](./api_comparison.png)
 
-## Enabling the API
+## Enabling the GNMI Interface
 
 The gNMI API has 2 mode of operating: secure and insecure. For production use insecure mode is **NOT RECOMMENDED** however for testing and validation in the lab and while learning about this API we can use insecure mode. 
 
@@ -40,13 +40,18 @@ In the lab envrionment's Ubuntu server the /etc/hosts file is used to create the
 
 ![](./etc_hosts.png)
 
+#### gNMI - Insecure server
+To enable gNMI in insecure mode use the following CLI commands:
+
 ```
 gnmi-yang
 gnmi-yang server
+gnmi-yang port 50052
 ```
 
-Note: The default insecure gNMI port is 50052 and can be changed with the **gnmi-yang port** CLI
+Note: The default insecure gNMI port is 50052 and can be changed with the **gnmi-yang port** CLI and it may not appear in the **show run | i gnmi** depending if it has been set.
 
+#### gNMI - Secure server
 
 The process to enable the secure API is a 4 step process where the SSL certificates are generated using OpenSSL then installed into the IOS XE trustpoint. Next the gNMI API can be enabled using the trustpoint and certificates from the previous steps, and now the API is ready for secure communication using YANGSuite, Python, Go, or any other tooling. It is important to remember that when used in secure mode the **IP address is not used as the certificate is tied to the DNS name of 'c9300'.** Secure connections to the IP address will fail, so ensure the DNS name is used when connecting.
 
@@ -140,26 +145,108 @@ Next the gnmi-yang server is configured to use the newly installed trustpoint an
 gnmi-yang
 gnmi-yang secure-trustpoint gnmitrustpoint1
 gnmi-yang secure-server
+gnmi-yang secure-port 9339
 ```
 
-Note: The default insecure gNMI port is 50051 and can be change with the **gnmi-yang secure-port** CLI
+Note: The default gNMI secure port is 9339 and can be change with the **gnmi-yang secure-port** CLI and it may not appear in the **show run | i gnmi** depending if it has been set.
 
 ### Step 4
 
 Eplore the tooling in the next section that can be used to now connect to the gNMI API securely using the certificates and trustpoint configuration that has ben enabled.
 
 
-# NEED HELP - with below 17.2.1 xml2json error (?)
-
 ## Tooling
 
-### YANGSuite (NOT WORKING ?)
+### YANGSuite
 
-The YANGSuite GUI based tooling is used to visually interact with the gNMI API. Follow the workflow below to build and run the RPC.
+The YANGSuite GUI based tooling is used to visually interact with the gNMI API. Refer to the NETCONF/YANG module for details of YANGSuite workflows.
 
-![](./yangsuite_gnmi_get.png)
+Follow the workflow below to build and run the GET RPC for the Vlan1 interface
 
-### py_gnmi_cli.py (NOT WORKING ?)
+
+![](./yangsuite_get_ocif_vlan1.png)
+
+With YANGSuite the following JSON in generated based off of the YANG modeled data:
+
+```
+{
+  "prefix": {"origin": "openconfig", "elem": [{"name": "interfaces"}]},
+  "path": [
+    {
+      "origin": "openconfig",
+      "elem": [{"name": "interface", "key": {"name": "Vlan1"}}]
+    },
+    {
+      "origin": "openconfig",
+      "elem": [
+        {"name": "interface", "key": {"name": "Vlan1"}},
+        {"name": "name"}
+      ]
+    }
+  ],
+  "encoding": "JSON_IETF",
+  "action": "get_request"
+}
+```
+
+The gRPC payload above in then sent to the gNMI server that replies with the following results for the interface configuration and state data:
+
+```
+{
+  "notification": [
+    {
+      "timestamp": "1592936497525455890",
+      "prefix": {"origin": "openconfig", "elem": [{"name": "interfaces"}]},
+      "update": [
+        {
+          "path": {
+            "origin": "openconfig",
+            "elem": [
+              {"name": "interfaces"},
+              {"name": "interface", "key": {"name": "Vlan1"}}
+            ]
+          },
+          "val": {
+            "json_ietf_val": "{\"name\":\"Vlan1\",\"config\":{\"name\":\"Vlan1\",\"type\":\"iana-if-type:l3ipvlan\",\"enabled\":true},\"state\":{\"name\":\"Vlan1\",\"type\":\"iana-if-type:l3ipvlan\",\"enabled\":true,\"ifindex\":53,\"admin-status\":\"UP\",\"oper-status\":\"UP\",\"last-change\":\"1591938451589000000\",\"counters\":{\"in-octets\":\"10360\",\"in-unicast-pkts\":\"44\",\"in-broadcast-pkts\":\"0\",\"in-multicast-pkts\":\"0\",\"in-discards\":\"0\",\"in-errors\":\"0\",\"in-unknown-protos\":\"0\",\"in-fcs-errors\":\"0\",\"out-octets\":\"5925\",\"out-unicast-pkts\":\"70\",\"out-broadcast-pkts\":\"0\",\"out-multicast-pkts\":\"0\",\"out-discards\":\"0\",\"out-errors\":\"0\",\"last-clear\":\"1591938280000000000\"},\"openconfig-platform-port:hardware-port\":\"Vlan1\"}}"
+          }
+        }
+      ]
+    },
+    {
+      "timestamp": "1592936497551955750",
+      "prefix": {"origin": "openconfig", "elem": [{"name": "interfaces"}]},
+      "update": [
+        {
+          "path": {
+            "origin": "openconfig",
+            "elem": [
+              {"name": "interfaces"},
+              {"name": "interface", "key": {"name": "Vlan1"}},
+              {"name": "name"}
+            ]
+          },
+          "val": {"json_ietf_val": "\"Vlan1\""}
+        }
+      ]
+    }
+  ]
+}
+```
+
+The actual payload is in the val/jason_ietf_val key-value pair
+
+```
+"val": {
+            "json_ietf_val": "{"name":"Vlan1","config":{"name":"Vlan1","type":"iana-if-type:l3ipvlan","enabled":true},
+            "state":{"name":"Vlan1","type":"iana-if-type:l3ipvlan","enabled":true,"ifindex":53,"admin-status":"UP",
+            "oper-status":"UP","last-change":"1591938451589000000","counters":{"in-octets":"10360","in-unicast-pkts":"44",
+            "in-broadcast-pkts":"0","in-multicast-pkts":"0","in-discards":"0","in-errors":"0","in-unknown-protos":"0",
+            "in-fcs-errors":"0","out-octets":"5925","out-unicast-pkts":"70","out-broadcast-pkts":"0","out-multicast-pkts":"0",
+            "out-discards":"0","out-errors":"0","last-clear":"1591938280000000000"},"openconfig-platform-port:hardware-port":"Vlan1"}}"
+```
+
+
+### py_gnmi_cli.py ( STOP HERE - CONTINUE WORKING ON THIS PART DOWN )
 
 The gnxi tooling is available from the Google Github repository and can be used for validation of the gNMI API on the C9300 switch for sending payloads and for retreiving operational data. Download and install the tooling with the following commands from the Ubunut SSH:
 
