@@ -16,13 +16,13 @@ Use Cases and examples
 
 ## Introduction to gNMI
 
-The Google Remote Proceudure Call (g) Network Management Interface (NMI), or gNMI, is a specification of RPC's and behaviours for managing the state on network devices. It is built on the open source gRPC framework and uses the Protobuf IDL (protocol buffers interactive data language)
+The Google Remote Procedure Call (g) Network Management Interface (NMI), or gNMI, is a specification of RPC's and behaviours for managing the state on network devices. It is built on the open source gRPC framework and uses the Protobuf IDL (protocol buffers interactive data language)
 
-Details of Protocol Buffers is available at from Google Developers at [https://developers.google.com/protocol-buffers/docs/overview](https://developers.google.com/protocol-buffers/docs/overview) while the specification for gNMI itself is available on Github/Openconfig at [https://github.com/openconfig/gnmi](https://github.com/openconfig/gnmi) and the actual gnmi.proto file is defined at [https://github.com/openconfig/gnmi/blob/master/proto/gnmi/gnmi.proto](https://github.com/openconfig/gnmi/blob/master/proto/gnmi/gnmi.proto) - These resrouces can be refered if needed however for the purpose of this lab the it is not necessary to have a deeper understaning of these concepts.
+Details of Protocol Buffers is available at from Google Developers at [https://developers.google.com/protocol-buffers/docs/overview](https://developers.google.com/protocol-buffers/docs/overview) while the specification for gNMI itself is available on Github/Openconfig at [https://github.com/openconfig/gnmi](https://github.com/openconfig/gnmi) and the actual gnmi.proto file is defined at [https://github.com/openconfig/gnmi/blob/master/proto/gnmi/gnmi.proto](https://github.com/openconfig/gnmi/blob/master/proto/gnmi/gnmi.proto) - These resources can be referred if needed however for the purpose of this lab is not necessary to have a deeper understanding of these concepts.
 
 ![](gnmi_intro.png)
 
-Similar to the NETCONF and RESTCONF programmatic interfaces, gNMI can be used for a variety of operations including retreiving operational and runtime details using the GET operations, as well as making configurtion changes using the SET operation. The SUBSCRIBE operation supports Model Driven Telemetry, or streaming telemetry, to be enabled from this interface as well.
+Similar to the NETCONF and RESTCONF programmatic interfaces, gNMI can be used for a variety of operations including retrieving operational and runtime details using the GET operations, as well as making configuration changes using the SET operation. The SUBSCRIBE operation supports Model Driven Telemetry, or streaming telemetry, to be enabled from this interface as well.
 
 ![](./api_operations.png)
 
@@ -36,12 +36,12 @@ The gNMI API has 2 mode of operating: secure and insecure. For production use in
 
 To enable the gNMI insecure mode the following CLI is used. Insecure mode allows connections directly to the IP address of the device, however secure mode uses the DNS name of the device that is encoded into the SSL certificates. 
 
-In the lab envrionment's Ubuntu server the /etc/hosts file is used to create the local DNS resoltion for the lab machine, including the c9300 which is mapped to 10.1.1.5:
+In the lab environment's Ubuntu server the /etc/hosts file is used to create the local DNS resolution for the lab machine, including the c9300 which is mapped to 10.1.1.5. Open the MobaXterm icon on the Jumphost desktop and execute the following command.
 
 ![](./etc_hosts.png)
 
 #### gNMI - Insecure server
-To enable gNMI in insecure mode use the following CLI commands:
+For Enabling gNMI in insecure mode, open C9300 in another tab of MobaXterm and configure the following commands.
 
 ```
 gnmi-yang
@@ -69,7 +69,7 @@ The IOS XE 16.12 configuration guide has details for creating and enabling gNMI 
 
 Using the gen_certs.sh script from the Cisco Innovation Edge github at [https://raw.githubusercontent.com/cisco-ie/cisco-gnmi-python/master/scripts/gen_certs.sh](https://raw.githubusercontent.com/cisco-ie/cisco-gnmi-python/master/scripts/gen_certs.sh) we can easily generate the certificates. This script follows the steps that are outlined in the above IOS XE 16.12 Programmability Configuration Guide link.
 
-To generate the certifcation lets follow these steps:
+To generate the certificates lets follow these steps:
 
 ```
 mkdir -p ~/gnmi_ssl/
@@ -116,7 +116,8 @@ Create the new trustpoint:
 
 **crypto pki import gnmitrustpoint1 pem terminal password Cisco12345**
 
-Copy and paste the certificates as noted below: **rootCA.pem, devices.des3.key, and device.crt**
+Copy and paste the certificates as noted below: **rootCA.pem, devices.des3.key, and device.crt**.
+Scorll down to see the gif image and also screenshot.
 
 ```
 C9300# configure terminal
@@ -257,16 +258,16 @@ Note: The default gNMI secure port is 9339 and can be change with the **gnmi-yan
 
 ### Step 4
 
-Eplore the tooling in the next section that can be used to now connect to the gNMI API securely using the certificates and trustpoint configuration that has ben enabled.
+Explore the tooling in the next section that can be used to now connect to the gNMI API securely using the certificates and trustpoint configuration that has been enabled.
 
 
 ## Tooling
 
 ### YANGSuite with the gNMI Insecure Server on port 50052
 
-The YANGSuite GUI based tooling is used to visually interact with the gNMI API. Refer to the NETCONF/YANG module for details of YANGSuite workflows.
+The YANGSuite GUI based tooling is used to visually interact with the gNMI API. Refer to the NETCONF/YANG module for details of YANGSuite workflows. Open Chrome on Desktop and click on the YangSuite bookmark.
 
-Follow the workflow below to build and run the GET RPC for the Vlan1 interface
+Follow the workflow below to build and run the GET RPC for the Vlan1 interface. And also, complete workflow shown in the below gif image.
 
 
 ![](./yangsuite_get_ocif_vlan1.png)
@@ -383,7 +384,8 @@ auto@automation:~$ gnmi_cli --help
 
 ![](gnmi_cli_help.png)
 
-A GET operation to retreive the device hostname can be sent using the following **gnmi_cli** command.
+A GET operation to retreive the device hostname can be sent using the following **gnmi_cli** command. 
+** EXPLAIN HOW YOU GOT /GNMI_PROTO/GET_HOSTNAME.TXT, BECAUSE IN THE YANG MODEL YOU SHOWED ONLY SHOWS HOSTNAME BUT NOT WHERE GNMI_PROTO YOU GOT FROM**
 
 ```
 auto@automation:~$ cd ~/gnmi_ssl/certs/
