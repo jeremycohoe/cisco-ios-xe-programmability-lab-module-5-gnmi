@@ -41,9 +41,10 @@ In the lab environment's Ubuntu server the /etc/hosts file is used to create the
 ![](./etc_hosts.png)
 
 #### gNMI - Insecure server
-For Enabling gNMI in insecure mode, open C9300 in another tab of MobaXterm and configure the following commands.
+To enable the gNMI insecure server connect to the C9300 using MobaXterm and send the following CLI commands:
 
 ```
+configure terminal
 gnmi-yang
 gnmi-yang server
 gnmi-yang port 50052
@@ -116,8 +117,7 @@ Create the new trustpoint:
 
 **crypto pki import gnmitrustpoint1 pem terminal password Cisco12345**
 
-Copy and paste the certificates as noted below: **rootCA.pem, devices.des3.key, and device.crt**.
-Scorll down to see the gif image and also screenshot.
+Copy and paste the certificates as noted below: **rootCA.pem, devices.des3.key, and device.crt**. Workflow examples are at the end of this section that show the completed workflow
 
 ```
 C9300# configure terminal
@@ -265,7 +265,7 @@ Explore the tooling in the next section that can be used to now connect to the g
 
 ### YANGSuite with the gNMI Insecure Server on port 50052
 
-The YANGSuite GUI based tooling is used to visually interact with the gNMI API. Refer to the NETCONF/YANG module for details of YANGSuite workflows. Open Chrome on Desktop and click on the YangSuite bookmark.
+The YANGSuite HTML5 GUI based tooling is used to visually interact with the gNMI API. Refer to the NETCONF/YANG module for details of YANGSuite workflows. Access YANGSuite from the web browser in the pod envrionment.
 
 Follow the workflow below to build and run the GET RPC for the Vlan1 interface. And also, complete workflow shown in the below gif image.
 
@@ -385,7 +385,6 @@ auto@automation:~$ gnmi_cli --help
 ![](gnmi_cli_help.png)
 
 A GET operation to retreive the device hostname can be sent using the following **gnmi_cli** command. 
-** EXPLAIN HOW YOU GOT /GNMI_PROTO/GET_HOSTNAME.TXT, BECAUSE IN THE YANG MODEL YOU SHOWED ONLY SHOWS HOSTNAME BUT NOT WHERE GNMI_PROTO YOU GOT FROM**
 
 ```
 auto@automation:~$ cd ~/gnmi_ssl/certs/
