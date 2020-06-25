@@ -367,6 +367,7 @@ The GNMI_CLI tooling is available from [https://github.com/openconfig/gnmi](http
 5. Set the PATH variable to include the GOROOT bin
 6. "Go get" gnmi_cli from Github
 
+The steps that were required to install Go and the gnmi_cli tool are listed here for reference should you wish to install the tooling in your own lab envrionments.
 ```
 wget https://dl.google.com/go/go1.14.4.linux-amd64.tar.gz
 tar xvfz go1.14.4.linux-amd64.tar.gz
