@@ -267,6 +267,8 @@ Explore the tooling in the next section that can be used to now connect to the g
 
 The YANGSuite HTML5 GUI based tooling is used to visually interact with the gNMI API. Refer to the NETCONF/YANG module for details of YANGSuite workflows. Access YANGSuite from the web browser in the pod envrionment.
 
+The Device Profile for the C9300 in YANGSuite has already been created, and the **Edit Device** button can be selected to confirm that gNMI is enabled and on what port. The **Capabilities** button will establish a connection and return the supported YANG data models. 
+
 Follow the workflow below to build and run the GET RPC for the Vlan1 interface. And also, complete workflow shown in the below gif image.
 
 
