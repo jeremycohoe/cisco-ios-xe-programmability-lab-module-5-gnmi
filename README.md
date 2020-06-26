@@ -391,7 +391,10 @@ A GET operation to retreive the device hostname can be sent using the following 
 
 ```
 auto@automation:~$ cd ~/gnmi_ssl/certs/
-auto@automation:~/gnmi_ssl/certs$ gnmi_cli -address 10.1.1.5:9339 -server_name c9300 -with_user_pass -timeout 10s -get \
+
+auto@automation:~/gnmi_ssl/certs$ 
+
+gnmi_cli -address 10.1.1.5:9339 -server_name c9300 -with_user_pass -timeout 10s -get \
 -ca_crt rootCA.pem -client_crt client.crt -client_key client.key \
 -proto "$(cat ~/gnmi_proto/get_hostname.txt)"
 ```
