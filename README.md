@@ -387,7 +387,7 @@ auto@automation:~$ gnmi_cli --help
 
 ![](gnmi_cli_help.png)
 
-A GET operation to retreive the device hostname can be sent using the following **gnmi_cli** command. 
+A GET operation to retreive the device hostname can be sent using the following **gnmi_cli** command. First change directory (cd) into **~/gnmi_ssl/certs**  then send the **gnmi_cli -address ....** command with all the options defined:
 
 ```
 auto@automation:~$ cd ~/gnmi_ssl/certs/
