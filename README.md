@@ -20,15 +20,15 @@ The Google Remote Procedure Call (g) Network Management Interface (NMI), or gNMI
 
 Details of Protocol Buffers is available at from Google Developers at [https://developers.google.com/protocol-buffers/docs/overview](https://developers.google.com/protocol-buffers/docs/overview) while the specification for gNMI itself is available on Github/Openconfig at [https://github.com/openconfig/gnmi](https://github.com/openconfig/gnmi) and the actual gnmi.proto file is defined at [https://github.com/openconfig/gnmi/blob/master/proto/gnmi/gnmi.proto](https://github.com/openconfig/gnmi/blob/master/proto/gnmi/gnmi.proto) - These resources can be referred if needed however for the purpose of this lab is not necessary to have a deeper understanding of these concepts.
 
-![](gnmi_intro.png)
+![](imgs/gnmi_intro.png)
 
 Similar to the NETCONF and RESTCONF programmatic interfaces, gNMI can be used for a variety of operations including retrieving operational and runtime details using the GET operations, as well as making configuration changes using the SET operation. The SUBSCRIBE operation supports Model Driven Telemetry, or streaming telemetry, to be enabled from this interface as well.
 
-![](./api_operations.png)
+![](imgs/api_operations.png)
 
 All of the programmatic interfaces (NETCONF, RESTCONF, gNMI, and gRPC) share the same set of YANG data models. An example is to review the interface configurations including interface descriptions which can be completed by using **any** of the programmatic interfaces using the same YANG data model: **Cisco-IOS-XE-interface-oper.YANG**. 
 
-![](./api_comparison.png)
+![](imgs/api_comparison.png)
 
 ## Enabling the GNMI Interface
 
@@ -38,7 +38,7 @@ To enable the gNMI insecure mode the following CLI is used. Insecure mode allows
 
 In the lab environment's Ubuntu server the /etc/hosts file is used to create the local DNS resolution for the lab machine, including the c9300 which is mapped to 10.1.1.5. Open the MobaXterm icon on the Jumphost desktop and execute the following command.
 
-![](./etc_hosts.png)
+![](imgs/etc_hosts.png)
 
 #### gNMI - Insecure server
 To enable the gNMI insecure server connect to the C9300 using MobaXterm and send the following CLI commands:
@@ -76,7 +76,7 @@ Step 2. Install certificates into IOS XE trustpoint
 Step 3. Enable secure gNMI
 Step 4. Connect and vlidate with tooling + cert
 ```
-![](secure_gnmi_quickstart.png)
+![](imgs/secure_gnmi_quickstart.png)
 
 The IOS XE 16.12 configuration guide has details for creating and enabling gNMI - Refer to [https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/prog/configuration/1612/b_1612_programmability_cg/grpc_network_management_interface.html#id_89031](https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/prog/configuration/1612/b_1612_programmability_cg/grpc_network_management_interface.html#id_89031) if needed.
 
@@ -95,7 +95,16 @@ bash gen_certs.sh
 bash gen_certs.sh c9300 10.1.1.5 Cisco12345
 ```
 
-![](gen_certs.png)
+![](imgs/gen_certs.png)
+
+To verify the 3 required certificates that are needed to load into IOS XE the following command can be used to cat out the files to the terminal:
+
+```
+echo;echo "rootCA.pem:" && cat rootCA.pem ; echo;echo "device.des3.key:" && cat device.des3.key ; echo;echo "device.crt:" &&  cat device.crt
+```
+
+You will see the 3 certificate details on the screen, this is used in the next steps when creatinging the Trustpoint on IOS XE.
+
 
 ### Step 2
 
@@ -103,7 +112,7 @@ Now that the certificates are generated they need to be installed into the IOS X
 
 Execute the **ls** command to list the certificate files and use **cat** to read the file out to screen
 
-![](ls_certs.png)
+![](imgs/ls_certs.png)
 
 You will need to copy and paste the following 3 certificates, so it is recomennded to cat out each file now using the following commands:
 
@@ -162,7 +171,7 @@ C9300(ca-trustpoint)# revocation-check none
 C9300(ca-trustpoint)# end
 ```
 
-![](./install_certs.gif)
+![](imgs/install_certs.gif)
 
 Successfull installation of the trustpoint will look similar to the following:
 
@@ -255,7 +264,7 @@ show crypto pki trustpoints  | i Trustpoint
 show crypto pki trustpoints
 ```
 
-![](./show_tp.png)
+![](imgs/show_tp.png)
 
 ### Step 3
 
@@ -303,7 +312,7 @@ The Device Profile for the C9300 in YANGSuite has already been created, and the 
 Follow the workflow below to build and run the GET RPC for the Vlan1 interface. And also, complete workflow shown in the below gif image.
 
 
-![](./yangsuite_get_ocif_vlan1.png)
+![](imgs/yangsuite_get_ocif_vlan1.png)
 
 With YANGSuite the following JSON in generated based off of the YANG modeled data:
 
@@ -387,7 +396,7 @@ The payload with the interface configuration and state data is in the **val/jaso
 
 The completed workflow will look similar to the following:
 
-![](yangsuite_get_vlan1.gif)
+![](imgs/yangsuite_get_vlan1.gif)
 
 ### gnmi_cli with TLS and the gNMI secure-server on port 9339
 
@@ -416,7 +425,7 @@ The gnmi_cli tool has been installed and is ready for use:
 auto@automation:~$ gnmi_cli --help
 ```
 
-![](gnmi_cli_help.png)
+![](imgs/gnmi_cli_help.png)
 
 A GET operation to retreive the device hostname can be sent using the following **gnmi_cli** command. First change directory (cd) into **~/gnmi_ssl/certs**  then send the **gnmi_cli -address ....** command with all the options defined:
 
@@ -432,7 +441,7 @@ gnmi_cli -address 10.1.1.5:9339 -server_name c9300 -with_user_pass -timeout 10s 
 
 In this example the payload is defined with the -proto flag and contains the folowing YANG modeled data
 
-![](yangsuite_explore_oc_system.png)
+![](imgs/yangsuite_explore_oc_system.png)
 
 The **get_hostname.txt** proto file defines which YANG data model and elements to retreive:
 
@@ -479,7 +488,7 @@ The gNMI secure server replies with the resulting payload:
 
 The complete workflow should look similar to the following:
 
-![](gnmi_cli_get_hostname.gif)
+![](imgs/gnmi_cli_get_hostname.gif)
 
 ## Conclusion
 
