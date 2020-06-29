@@ -285,7 +285,7 @@ Settings
   Secure client trustpoint:
 ```
 
-Use the **show gnmi-yang state detail** CLI to confirm the **gnmi server** has been enabled on port **50052**
+Use the **show gnmi-yang state detail** CLI to confirm the **secure gnmi server** has been enabled on port **9339**
 
 ### Step 4
 
