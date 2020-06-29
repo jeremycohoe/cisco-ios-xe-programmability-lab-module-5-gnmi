@@ -52,6 +52,20 @@ gnmi-yang port 50052
 
 Note: The default insecure gNMI port is 50052 and can be changed with the **gnmi-yang port** CLI and it may not appear in the **show run | i gnmi** depending if it has been set.
 
+Use the **show gnmi-yang state detail** CLI to confirm the **gnmi server** has been enabled on port **50052**
+```
+C9300#show gnmi-yang state detail
+Settings
+========
+  Server: Enabled
+  Server port: 50052
+  Secure server: Disabled
+  Secure server port: 9339
+  Secure client authentication: Disabled
+  Secure trustpoint:
+  Secure client trustpoint:
+```
+
 #### gNMI - Secure server
 
 The process to enable the secure API is a 4 step process where the SSL certificates are generated using OpenSSL then installed into the IOS XE trustpoint. Next the gNMI API can be enabled using the trustpoint and certificates from the previous steps, and now the API is ready for secure communication using YANGSuite, Python, Go, or any other tooling. It is important to remember that when used in secure mode the **IP address is not used as the certificate is tied to the DNS name of 'c9300'.** Secure connections to the IP address will fail, so ensure the DNS name is used when connecting.
@@ -255,6 +269,23 @@ gnmi-yang secure-port 9339
 ```
 
 Note: The default gNMI secure port is 9339 and can be change with the **gnmi-yang secure-port** CLI and it may not appear in the **show run | i gnmi** depending if it has been set.
+
+Use the **show gnmi-yang state detail** CLI to confirm the **gnmi secure server** has been enabled on port **9399** and that the correct **Trustpoint** has been set.
+
+```
+C9300#show gnmi-yang state detail
+Settings
+========
+  Server: Enabled
+  Server port: 50052
+  Secure server: Enabled
+  Secure server port: 9339
+  Secure client authentication: Disabled
+  Secure trustpoint: gnmitrustpoint1
+  Secure client trustpoint:
+```
+
+Use the **show gnmi-yang state detail** CLI to confirm the **gnmi server** has been enabled on port **50052**
 
 ### Step 4
 
