@@ -34,7 +34,22 @@ All of the programmatic interfaces (NETCONF, RESTCONF, gNMI, and gRPC) share the
 
 The gNMI API has 2 mode of operating: secure and insecure.  Insecure mode can be used for initial bootstrapping of the secure server - the self signed certificate can be used to install the correct certificates in a day0 workflow. While it is simple to enable the insecure server, this lab will focus on the secure mode as this is what is recommended for use in production envrionments.
 
-In the lab environment's Ubuntu server the /etc/hosts file is used to create the local DNS resolution for the lab machine, including the c9300 which is mapped to 10.1.1.5. This way the DNS name can be used to connect to the device which allows the TLS certificte's CN field (Common Name) to match. The CN for the TLS certificate is generated with the gen_certs.sh script using the hostname c9300
+#### gNMI Prerequisite: NETCONF and AAA
+The **NETCONF** interface being enabled is a prerequisite of the gNMI and other YANG based interfaces. The check the status of NETCONF run the **show netconf-yang status** CLI and ensure it is showing enabled. Start or re-start NETCONF if required by sending the **no netconf-yang** or **netconf-yang** configure commands
+
+```
+C9300#show netconf-yang status
+netconf-yang: enabled
+netconf-yang ssh port: 830
+netconf-yang candidate-datastore: disabled
+
+C9300#conf t
+C9300(config)#no netconf-yang
+C9300(config)#netconf-yang
+```
+
+#### DNS Names
+In the lab environment's Ubuntu server the /etc/hosts file is used to create the local DNS resolution for the lab machine, including the c9300 which is mapped to 10.1.1.5. This way the DNS name can be used to connect to the device which allows the TLS certificte's CN field (Common Name) to match and be valid. The CN for the TLS certificate is generated with the gen_certs.sh script using the hostname **c9300**
 
 ![](imgs/etc_hosts.png)
 
