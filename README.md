@@ -32,16 +32,14 @@ All of the programmatic interfaces (NETCONF, RESTCONF, gNMI, and gRPC) share the
 
 ## Enabling the GNMI Interface
 
-The gNMI API has 2 mode of operating: secure and insecure. For production use insecure mode is **NOT RECOMMENDED** however for testing and validation in the lab and while learning about this API we can use insecure mode. 
+The gNMI API has 2 mode of operating: secure and insecure.  Insecure mode can be used for initial bootstrapping of the secure server - the self signed certificate can be used to install the correct certificates in a day0 workflow. While it is simple to enable the insecure server, this lab will focus on the secure mode as this is what is recommended for use in production envrionments.
 
-To enable the gNMI insecure mode the following CLI is used. Insecure mode allows connections directly to the IP address of the device, however secure mode uses the DNS name of the device that is encoded into the SSL certificates. 
-
-In the lab environment's Ubuntu server the /etc/hosts file is used to create the local DNS resolution for the lab machine, including the c9300 which is mapped to 10.1.1.5. Open the MobaXterm icon on the Jumphost desktop and execute the following command.
+In the lab environment's Ubuntu server the /etc/hosts file is used to create the local DNS resolution for the lab machine, including the c9300 which is mapped to 10.1.1.5. This way the DNS name can be used to connect to the device which allows the TLS certificte's CN field (Common Name) to match. The CN for the TLS certificate is generated with the gen_certs.sh script using the hostname c9300
 
 ![](imgs/etc_hosts.png)
 
 #### gNMI - Insecure server
-To enable the gNMI insecure server connect to the C9300 using MobaXterm and send the following CLI commands:
+To enable the gNMI insecure server for day0 bootstrapping, connect to the C9300 using MobaXterm and send the following CLI commands. It is not necessary to enable insecure mode for this lab as it is not used, and instead refer to the secure server section.
 
 ```
 configure terminal
@@ -66,7 +64,7 @@ Settings
   Secure client trustpoint:
 ```
 
-#### gNMI - Secure server
+#### gNMI - secure server
 
 The process to enable the secure API is a 4 step process where the SSL certificates are generated using OpenSSL then installed into the IOS XE trustpoint. Next the gNMI API can be enabled using the trustpoint and certificates from the previous steps, and now the API is ready for secure communication using YANGSuite, Python, Go, or any other tooling. It is important to remember that when used in secure mode the **IP address is not used as the certificate is tied to the DNS name of 'c9300'.** Secure connections to the IP address will fail, so ensure the DNS name is used when connecting.
 
@@ -279,7 +277,7 @@ gnmi-yang secure-port 9339
 
 Note: The default gNMI secure port is 9339 and can be change with the **gnmi-yang secure-port** CLI and it may not appear in the **show run | i gnmi** depending if it has been set.
 
-Use the **show gnmi-yang state detail** CLI to confirm the **gnmi secure server** has been enabled on port **9399** and that the correct **Trustpoint** has been set.
+Use the **show gnmi-yang state detail** CLI to confirm the **gnmi secure server** has been enabled on port **9339** and that the correct **Trustpoint** has been set.
 
 ```
 C9300#show gnmi-yang state detail
@@ -303,13 +301,32 @@ Explore the tooling in the next section that can be used to now connect to the g
 
 ## Tooling
 
-### YANGSuite with the gNMI Insecure Server on port 50052
+### YANGSuite with the gNMI secure server on port 9339
 
 The YANGSuite HTML5 GUI based tooling is used to visually interact with the gNMI API. Refer to the NETCONF/YANG module for details of YANGSuite workflows. Access YANGSuite from the web browser in the pod envrionment.
 
-The Device Profile for the C9300 in YANGSuite has already been created, and the **Edit Device** button can be selected to confirm that gNMI is enabled and on what port. The **Capabilities** button will establish a connection and return the supported YANG data models. 
 
-Follow the workflow below to build and run the GET RPC for the Vlan1 interface. And also, complete workflow shown in the below gif image.
+The Device Profile for the C9300 in YANGSuite has already been created, and the **Edit Device** button can be selected to confirm that gNMI is enabled and with which settings. The **Capabilities** button will establish a connection and return the supported YANG data models. 
+
+
+### Load TLS certificates into YangSuite
+
+From the YANGSuite GUI in the browser navigate to **Setup > Device Profiles** then select the **C9300** and **Edit selected device**
+
+The certificates to load into the YANGSuite tooling are the **rootCA.pem, client.crt, and client.key** - Copy these files using MobaXterm or copy/paste the certificate contents into the Notepad/Sublime editor, and then import them into the **Device Profile** for the **C9300** by selecting the "Choose File" and supplying the correct certificate.
+
+![](imgs/yangsuite-load-certs.png)
+
+Enable the "Device supports gNMI" and "Use TLS Certificate". The certificate hostname that was entered with the gen_certs.sh command needs to match the "TLS host override" field, so enter **c9300** into this field.
+
+![](imgs/yangsuite_enable_tls)
+
+Once the certificates are loaded select **Save Change** - then select **Check Selected Devices Reachability** - this confirms the gNMI secure server has been enabled correctly.
+
+
+### YANGSuite workflow for GET OpenConfig Interface Vlan1
+
+Follow the workflow below to build and run the GET RPC for the Vlan1 interface. The completed workflow example in shown below.
 
 
 ![](imgs/yangsuite_get_ocif_vlan1.png)
