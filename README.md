@@ -138,7 +138,7 @@ Create the new trustpoint:
 
 **crypto pki import gnmitrustpoint1 pem terminal password Cisco12345**
 
-Copy and paste the certificates as noted below: **rootCA.pem, devices.des3.key, and device.crt**. Workflow examples are at the end of this section that show the completed workflow
+Copy and paste the certificates as noted below: **rootCA.pem, device.des3.key, and device.crt**. Workflow examples are at the end of this section that show the completed workflow
 
 ```
 C9300# configure terminal
