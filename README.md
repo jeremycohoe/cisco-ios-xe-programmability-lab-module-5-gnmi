@@ -315,7 +315,7 @@ From the YANGSuite GUI in the browser navigate to **Setup > Device Profiles** th
 
 The certificates to load into the YANGSuite tooling are the **rootCA.pem, client.crt, and client.key** - Copy these files using MobaXterm or copy/paste the certificate contents into the Notepad/Sublime editor, and then import them into the **Device Profile** for the **C9300** by selecting the "Choose File" and supplying the correct certificate.
 
-**********can you show atleast one file for copy/paste. why because what to include in the certificate while copying from MobaXterm to text file*************
+![](imgs/copy_rootCA.png)
 
 ![](imgs/yangsuite-load-certs.png)
 
