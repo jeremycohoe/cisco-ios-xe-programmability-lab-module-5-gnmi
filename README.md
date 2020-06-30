@@ -39,7 +39,7 @@ In the lab environment's Ubuntu server the /etc/hosts file is used to create the
 ![](imgs/etc_hosts.png)
 
 #### gNMI - Insecure server
-To enable the gNMI insecure server for day0 bootstrapping, connect to the C9300 using MobaXterm and send the following CLI commands. It is not necessary to enable insecure mode for this lab as it is not used, and instead refer to the secure server section.
+To enable the gNMI insecure server for day0 bootstrapping, connect to the C9300 using MobaXterm and send the following CLI commands. It is not necessary to enable insecure mode for this lab as it is not used and this is for your reference only, and instead refer to the secure server section.
 
 ```
 configure terminal
@@ -303,7 +303,7 @@ Explore the tooling in the next section that can be used to now connect to the g
 
 ### YANGSuite with the gNMI secure server on port 9339
 
-The YANGSuite HTML5 GUI based tooling is used to visually interact with the gNMI API. Refer to the NETCONF/YANG module for details of YANGSuite workflows. Access YANGSuite from the web browser in the pod envrionment.
+The YANGSuite HTML5 GUI based tooling is used to visually interact with the gNMI API. Refer to the Module 3 - NETCONF + YANG for details of YANGSuite workflows. Access YANGSuite from the web browser in the pod envrionment.
 
 
 The Device Profile for the C9300 in YANGSuite has already been created, and the **Edit Device** button can be selected to confirm that gNMI is enabled and with which settings. The **Capabilities** button will establish a connection and return the supported YANG data models. 
@@ -315,11 +315,13 @@ From the YANGSuite GUI in the browser navigate to **Setup > Device Profiles** th
 
 The certificates to load into the YANGSuite tooling are the **rootCA.pem, client.crt, and client.key** - Copy these files using MobaXterm or copy/paste the certificate contents into the Notepad/Sublime editor, and then import them into the **Device Profile** for the **C9300** by selecting the "Choose File" and supplying the correct certificate.
 
+**********can you show atleast one file for copy/paste. why because what to include in the certificate while copying from MobaXterm to text file*************
+
 ![](imgs/yangsuite-load-certs.png)
 
 Enable the "Device supports gNMI" and "Use TLS Certificate". The certificate hostname that was entered with the gen_certs.sh command needs to match the "TLS host override" field, so enter **c9300** into this field.
 
-![](imgs/yangsuite_enable_tls)
+![](imgs/yangsuite_enable_tls.png)
 
 Once the certificates are loaded select **Save Change** - then select **Check Selected Devices Reachability** - this confirms the gNMI secure server has been enabled correctly.
 
