@@ -330,8 +330,11 @@ From the YANGSuite GUI in the browser navigate to **Setup > Device Profiles** th
 
 The certificates to load into the YANGSuite tooling are the **rootCA.pem, client.crt, and client.key** - Copy these files using MobaXterm or copy/paste the certificate contents into the Notepad/Sublime editor, and then import them into the **Device Profile** for the **C9300** by selecting the "Choose File" and supplying the correct certificate.
 
+Example of copying and pasting the 3 required files via sublime:
 ![](imgs/copy_rootCA.png)
 
+
+When loading the certificate files into YANGSuite ensure the 3 correct certificates are selected: **rootCA.pem client.crt client.key**
 ![](imgs/yangsuite-load-certs.png)
 
 Enable the "Device supports gNMI" and "Use TLS Certificate". The certificate hostname that was entered with the gen_certs.sh command needs to match the "TLS host override" field, so enter **c9300** into this field.
