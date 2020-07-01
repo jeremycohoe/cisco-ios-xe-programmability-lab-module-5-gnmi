@@ -112,6 +112,8 @@ bash gen_certs.sh c9300 10.1.1.5 Cisco12345
 
 To verify the 3 required certificates that are needed to load into IOS XE the following command can be used to cat out the files to the terminal:
 
+**Copy the 3 required certificates to the screen**   (Do not type, instead Copy/Paste for reference if needed) 
+
 ```
 echo;echo "rootCA.pem:" && cat rootCA.pem ; echo;echo "device.des3.key:" && cat device.des3.key ; echo;echo "device.crt:" &&  cat device.crt
 ```
