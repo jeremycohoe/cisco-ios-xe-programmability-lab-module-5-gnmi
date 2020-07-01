@@ -12,11 +12,17 @@ Tooling
 
 Use Cases and examples
 
-
-
 ## Introduction to gNMI
 
-The Google Remote Procedure Call (g) Network Management Interface (NMI), or gNMI, is a specification of RPC's and behaviours for managing the state on network devices. It is built on the open source gRPC framework and uses the Protobuf IDL (protocol buffers interactive data language)
+The gNMI Model Driven Programmatic Interface is part of the **Device Configuration and Device Monitoring** ecosystem within Cisco IOS XE, shown below:
+
+![](imgs/iosxelifecycle.png)
+
+A review of the IOS XE Programmability and Telemetry interfaces of **gNMI, NETCONF, RESTCONF, and gRPC** is below, specifically the **YANG** data models:
+
+![](imgs/apioverviewyang.png)
+
+The **Google Remote Procedure Call (g) Network Management Interface (NMI)**, or **gNMI** for short, is a specification of RPC's and behaviours for managing the state on network devices. It is built on the open source gRPC framework and uses the Protobuf IDL (protocol buffers interactive data language). 
 
 Details of Protocol Buffers is available at from Google Developers at [https://developers.google.com/protocol-buffers/docs/overview](https://developers.google.com/protocol-buffers/docs/overview) while the specification for gNMI itself is available on Github/Openconfig at [https://github.com/openconfig/gnmi](https://github.com/openconfig/gnmi) and the actual gnmi.proto file is defined at [https://github.com/openconfig/gnmi/blob/master/proto/gnmi/gnmi.proto](https://github.com/openconfig/gnmi/blob/master/proto/gnmi/gnmi.proto) - These resources can be referred if needed however for the purpose of this lab is not necessary to have a deeper understanding of these concepts.
 
