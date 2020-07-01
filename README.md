@@ -101,6 +101,13 @@ The IOS XE 16.12 configuration guide has details for creating and enabling gNMI 
 
 ### Step 1
 
+### Getting Started with MobaXterm
+
+Connect to the Remote Desktop Environment and use MobaXterm to SSH into Ubuntu VM:
+
+![](imgs/mobaxterm.png)
+
+
 Using the gen_certs.sh script from the Cisco Innovation Edge github at [https://raw.githubusercontent.com/cisco-ie/cisco-gnmi-python/master/scripts/gen_certs.sh](https://raw.githubusercontent.com/cisco-ie/cisco-gnmi-python/master/scripts/gen_certs.sh) we can easily generate the certificates. This script follows the steps that are outlined in the above IOS XE 16.12 Programmability Configuration Guide link.
 
 To generate the certificates lets follow these steps:
