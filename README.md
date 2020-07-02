@@ -72,6 +72,7 @@ gnmi-yang port 50052
 Note: The default insecure gNMI port is 50052 and can be changed with the **gnmi-yang port** CLI and it may not appear in the **show run | i gnmi** depending if it has been set.
 
 Use the **show gnmi-yang state detail** CLI to confirm the **gnmi server** has been enabled on port **50052**
+
 ```
 C9300#show gnmi-yang state detail
 Settings
@@ -323,6 +324,10 @@ Settings
 ```
 
 Use the **show gnmi-yang state detail** CLI to confirm the **secure gnmi server** has been enabled on port **9339**
+
+![](imgs/showgnmidetail.jpg)
+
+Note: In this example the insecure server on port 50052 is Disabled, however the "secure server" on port 9339 is Enabled.
 
 ### Step 4
 
