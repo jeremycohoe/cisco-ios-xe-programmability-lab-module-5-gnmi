@@ -313,7 +313,7 @@ Use the **show gnmi-yang state detail** CLI to confirm the **gnmi secure server*
 C9300#show gnmi-yang state detail
 Settings
 ========
-  Server: Enabled
+  Server: Disabled
   Server port: 50052
   Secure server: Enabled
   Secure server port: 9339
