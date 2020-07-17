@@ -336,7 +336,9 @@ Explore the tooling in the next section that can be used to now connect to the g
 
 ## Tooling
 
-There are two main options for working with the gNMI API: CLI or GUI based tooling. THe gnmi_cli CLI based tooling provides a sample use case where the device hostname is retreived, and the YangSuite GUI based toolinng provides a much richer user experience when first working with the API.
+There are two main options for working with the gNMI API: CLI or GUI based tooling. 
+
+The gnmi_cli CLI based tooling provides a sample use case where the device hostname is retreived, and the YangSuite GUI based toolinng provides a much richer user experience when first working with the API.
 
 ### gnmi_cli with TLS and the gNMI secure-server on port 9339
 
