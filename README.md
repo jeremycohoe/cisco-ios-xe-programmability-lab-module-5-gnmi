@@ -336,6 +336,101 @@ Explore the tooling in the next section that can be used to now connect to the g
 
 ## Tooling
 
+There are two main options for working with the gNMI API: CLI or GUI based tooling. THe gnmi_cli CLI based tooling provides a sample use case where the device hostname is retreived, and the YangSuite GUI based toolinng provides a much richer user experience when first working with the API.
+
+### gnmi_cli with TLS and the gNMI secure-server on port 9339
+
+The GNMI_CLI tooling is available from [https://github.com/openconfig/gnmi](https://github.com/openconfig/gnmi) and has already been installed in the lab envrionment's Ubuntu VM using the following workflow.
+
+1. Download the go version 1.14 from https://golang.org/dl/
+2. Untar the file
+3. Move it to /usr/local
+4. Set the GOROOT variable
+5. Set the PATH variable to include the GOROOT bin
+6. "Go get" gnmi_cli from Github
+
+The steps that were required to install Go and the gnmi_cli tool are listed here for reference should you wish to install the tooling in your own lab envrionments.
+```
+wget https://dl.google.com/go/go1.14.4.linux-amd64.tar.gz
+tar xvfz go1.14.4.linux-amd64.tar.gz
+sudo mv go /usr/local/
+export GOROOT=/usr/local/go
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+go get -u github.com/openconfig/gnmi/cmd/gnmi_cli
+```
+
+The gnmi_cli tool has been installed and is ready for use:
+
+```
+auto@automation:~$ gnmi_cli --help
+```
+
+![](imgs/gnmi_cli_help.png)
+
+A GET operation to retreive the device hostname can be sent using the following **gnmi_cli** command. First change directory (cd) into **~/gnmi_ssl/certs**  then send the **gnmi_cli -address ....** command with all the options defined:
+
+```
+auto@automation:~$ cd ~/gnmi_ssl/certs/
+
+auto@automation:~/gnmi_ssl/certs$ 
+
+gnmi_cli -address 10.1.1.5:9339 -server_name c9300 -with_user_pass -timeout 10s -get \
+-ca_crt rootCA.pem -client_crt client.crt -client_key client.key \
+-proto "$(cat ~/gnmi_proto/get_hostname.txt)"
+```
+
+In this example the payload is defined with the -proto flag and contains the folowing YANG modeled data
+
+![](imgs/yangsuite_explore_oc_system.png)
+
+The **get_hostname.txt** proto file defines which YANG data model and elements to retreive:
+
+```
+auto@automation:~$ cat ~/gnmi_proto/get_hostname.txt
+path: <
+  elem: <
+    name: "system"
+  >
+  elem: <
+    name: "config"
+  >
+  elem: <
+    name: "hostname"
+  >
+>
+encoding: JSON_IETF
+auto@automation:~$
+```
+
+The gNMI secure server replies with the resulting payload:
+
+```
+  timestamp: 1592947803699765348
+  update: <
+    path: <
+      elem: <
+        name: "system"
+      >
+      elem: <
+        name: "config"
+      >
+      elem: <
+        name: "hostname"
+      >
+    >
+    val: <
+      json_ietf_val: "\"C9300\""
+    >
+  >
+>
+
+```
+
+The complete workflow should look similar to the following:
+
+![](imgs/gnmi_cli_get_hostname.gif)
+
+
 ### YANGSuite with the gNMI secure server on port 9339
 
 The YANGSuite HTML5 GUI based tooling is used to visually interact with the gNMI API. Refer to the Module 3 - NETCONF + YANG for details of YANGSuite workflows. Access YANGSuite from the web browser in the pod envrionment.
@@ -455,97 +550,6 @@ The completed workflow will look similar to the following:
 
 ![](imgs/yangsuite_get_vlan1.gif)
 
-### gnmi_cli with TLS and the gNMI secure-server on port 9339
-
-The GNMI_CLI tooling is available from [https://github.com/openconfig/gnmi](https://github.com/openconfig/gnmi) and has already been installed in the lab envrionment's Ubuntu VM using the following workflow.
-
-1. Download the go version 1.14 from https://golang.org/dl/
-2. Untar the file
-3. Move it to /usr/local
-4. Set the GOROOT variable
-5. Set the PATH variable to include the GOROOT bin
-6. "Go get" gnmi_cli from Github
-
-The steps that were required to install Go and the gnmi_cli tool are listed here for reference should you wish to install the tooling in your own lab envrionments.
-```
-wget https://dl.google.com/go/go1.14.4.linux-amd64.tar.gz
-tar xvfz go1.14.4.linux-amd64.tar.gz
-sudo mv go /usr/local/
-export GOROOT=/usr/local/go
-export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
-go get -u github.com/openconfig/gnmi/cmd/gnmi_cli
-```
-
-The gnmi_cli tool has been installed and is ready for use:
-
-```
-auto@automation:~$ gnmi_cli --help
-```
-
-![](imgs/gnmi_cli_help.png)
-
-A GET operation to retreive the device hostname can be sent using the following **gnmi_cli** command. First change directory (cd) into **~/gnmi_ssl/certs**  then send the **gnmi_cli -address ....** command with all the options defined:
-
-```
-auto@automation:~$ cd ~/gnmi_ssl/certs/
-
-auto@automation:~/gnmi_ssl/certs$ 
-
-gnmi_cli -address 10.1.1.5:9339 -server_name c9300 -with_user_pass -timeout 10s -get \
--ca_crt rootCA.pem -client_crt client.crt -client_key client.key \
--proto "$(cat ~/gnmi_proto/get_hostname.txt)"
-```
-
-In this example the payload is defined with the -proto flag and contains the folowing YANG modeled data
-
-![](imgs/yangsuite_explore_oc_system.png)
-
-The **get_hostname.txt** proto file defines which YANG data model and elements to retreive:
-
-```
-auto@automation:~$ cat ~/gnmi_proto/get_hostname.txt
-path: <
-  elem: <
-    name: "system"
-  >
-  elem: <
-    name: "config"
-  >
-  elem: <
-    name: "hostname"
-  >
->
-encoding: JSON_IETF
-auto@automation:~$
-```
-
-The gNMI secure server replies with the resulting payload:
-
-```
-  timestamp: 1592947803699765348
-  update: <
-    path: <
-      elem: <
-        name: "system"
-      >
-      elem: <
-        name: "config"
-      >
-      elem: <
-        name: "hostname"
-      >
-    >
-    val: <
-      json_ietf_val: "\"C9300\""
-    >
-  >
->
-
-```
-
-The complete workflow should look similar to the following:
-
-![](imgs/gnmi_cli_get_hostname.gif)
 
 ## Conclusion
 
