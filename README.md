@@ -331,7 +331,44 @@ Note: In this example the insecure server on port 50052 is Disabled, however the
 
 ### Step 4
 
-Explore the tooling in the next section that can be used to now connect to the gNMI API securely using the certificates and trustpoint configuration that has been enabled.
+The gnmic tooling can be used to quickly and easily get the "Capabilties Exchange" from the gNMI API - this lists all of the YANG modules that are supported, and confirms functionaly of the API.
+
+Run the gnmic command to get the capabilities exchange: **gnmic -a 10.1.1.5:50052 -u admin -p Cisco123 --insecure capabilities**
+
+```
+auto@automation:~$ gnmic -a 10.1.1.5:50052 -u admin -p Cisco123 --insecure capabilities
+```
+
+The capabilities response will be seen and will look similar to the below:
+
+```
+Capabilities Response:
+gNMI version: 0.7.0
+supported models:
+  - Cisco-IOS-XE-aaa-oper, Cisco Systems, Inc., 2019-05-01
+  - Cisco-IOS-XE-aaa-types, Cisco Systems, Inc., 2020-03-01
+ ...
+ ...
+ ...
+  - openconfig-segment-routing, OpenConfig working group, 0.0.3
+  - openconfig-spanning-tree, OpenConfig working group, 0.2.1
+  - openconfig-system, OpenConfig working group, 0.6.0
+  - openconfig-system-logging, OpenConfig working group, 0.3.0
+  - openconfig-system-management, OpenConfig working group, 0.1.2
+  - openconfig-system-terminal, OpenConfig working group, 0.3.0
+  - openconfig-transport-types, OpenConfig working group, 0.5.0
+supported encodings:
+  - JSON
+  - JSON_IETF
+```
+
+
+![](imgs/gnmic_capabilities.gif)
+
+
+Continue to explore tooling in more detail.
+
+
 
 
 ## Tooling
