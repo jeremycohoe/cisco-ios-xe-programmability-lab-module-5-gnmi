@@ -363,7 +363,7 @@ supported encodings:
 ```
 
 
-![](imgs/gnmic_capabilities.gif)
+![](imgs/gnmi_capabilities.gif)
 
 
 Continue to explore tooling in more detail.
