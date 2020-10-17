@@ -83,7 +83,7 @@ The name of the crypto trustpoint is specified in the "cert-id" field which is s
 
 Copy the command to provision the certificates:
 
-**cd ~/gnmi_ssl/certs/ ; /home/auto/gnoi_cert -target_addr c9300:9339 -op provision -target_name c9300 -alsologtostderr -organization "jcohoe org" -ip_address 10.1.1.5 -time_out=10s -min_key_size=2048 -cert_id gnxi-cert4 -state BC -country CA -ca ./rootCA.pem -key ./rootCA.key**
+**cd ~/gnmi_ssl/certs/ ; /home/auto/gnoi_cert -target_addr c9300:9339 -op provision -target_name c9300 -alsologtostderr -organization "jcohoe org" -ip_address 10.1.1.5 -time_out=10s -min_key_size=2048 -cert_id gnxi-cert -state BC -country CA -ca ./rootCA.pem -key ./rootCA.key**
 
 You will see a log message like "Install Successfull"
 
@@ -105,109 +105,20 @@ show crypto pki trustpoints
 ![](imgs/show_tp.png)
 
 
+## Step 4
 
-### Step 4
+### Validating the gNMI interface state
 
-The gNMI API has now been securely enabled using gNOI cert.proto to install the certificate and restart the service.
+gnoi_cert was used to install the 'gnxi-cert' for use with the gNMI API interface. Check the status of the gNMI with the following CLI:
 
+**show gnxi state detail**
 
-## Validating secure gNMI with gmmi_cli tooling
+The ouptut should look similar. Note the **Secure trustpoint** is listed as **gnxi-cert** and that **GNMI** is in **State: Provisioned**
 
-There are two main options for working with the gNMI API: CLI or GUI based tooling. 
+![](./imgs/showgnxistate.png)
 
-The gnmi_cli CLI based tooling provides a sample use case where the device hostname is retreived, and the YangSuite GUI based toolinng provides a much richer user experience when first working with the API.
+This concludes the gNOI cert.proto section as the certifcate has been installed into the device's truststore and is available for use with gNMI.
 
-### gnmi_cli with TLS and the gNMI secure-server on port 9339
-
-The GNMI_CLI tooling is available from [https://github.com/openconfig/gnmi](https://github.com/openconfig/gnmi) and has already been installed in the lab envrionment's Ubuntu VM using the following workflow.
-
-1. Download the go version 1.14 from https://golang.org/dl/
-2. Untar the file
-3. Move it to /usr/local
-4. Set the GOROOT variable
-5. Set the PATH variable to include the GOROOT bin
-6. "Go get" gnmi_cli from Github
-
-The steps that were required to install Go and the gnmi_cli tool are listed here for reference should you wish to install the tooling in your own lab envrionments.
-```
-wget https://dl.google.com/go/go1.14.4.linux-amd64.tar.gz
-tar xvfz go1.14.4.linux-amd64.tar.gz
-sudo mv go /usr/local/
-export GOROOT=/usr/local/go
-export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
-go get -u github.com/openconfig/gnmi/cmd/gnmi_cli
-```
-
-The gnmi_cli tool has been installed and is ready for use:
-
-```
-auto@automation:~$ gnmi_cli --help
-```
-
-![](imgs/gnmi_cli_help.png)
-
-A GET operation to retreive the device hostname can be sent using the following **gnmi_cli** command. First change directory (cd) into **~/gnmi_ssl/certs**  then send the **gnmi_cli -address ....** command with all the options defined:
-
-```
-auto@automation:~$ cd ~/gnmi_ssl/certs/
-
-auto@automation:~/gnmi_ssl/certs$ 
-
-gnmi_cli -address c9300:9339 -server_name c9300 -with_user_pass -timeout 10s -get \
--ca_crt rootCA.pem -client_crt client.crt -client_key client.key \
--proto "$(cat ~/gnmi_proto/get_hostname.txt)"
-```
-
-In this example the payload is defined with the -proto flag and contains the folowing YANG modeled data
-
-![](imgs/yangsuite_explore_oc_system.png)
-
-The **get_hostname.txt** proto file defines which YANG data model and elements to retreive:
-
-```
-auto@automation:~$ cat ~/gnmi_proto/get_hostname.txt
-path: <
-  elem: <
-    name: "system"
-  >
-  elem: <
-    name: "config"
-  >
-  elem: <
-    name: "hostname"
-  >
->
-encoding: JSON_IETF
-auto@automation:~$
-```
-
-The gNMI secure server replies with the resulting payload:
-
-```
-  timestamp: 1592947803699765348
-  update: <
-    path: <
-      elem: <
-        name: "system"
-      >
-      elem: <
-        name: "config"
-      >
-      elem: <
-        name: "hostname"
-      >
-    >
-    val: <
-      json_ietf_val: "\"C9300\""
-    >
-  >
->
-
-```
-
-The complete workflow should look similar to the following:
-
-![](imgs/gnmi_cli_get_hostname.gif)
 
 ## Conclusion
 
