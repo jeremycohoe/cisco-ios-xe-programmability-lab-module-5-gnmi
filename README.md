@@ -83,7 +83,7 @@ The name of the crypto trustpoint is specified in the "cert-id" field which is s
 
 Copy the command to provision the certificates:
 
-**cd ~/gnmi_ssl/certs/ /home/auto/gnoi_cert -insecure -target_addr 10.1.1.5:9339 -op provision  -target_name c9300 -alsologtostderr -organization "my org" -ip_address 10.1.1.5 -time_out=10s -min_key_size=2048 -cert_id gnxi-cert -state BC -country CA -ca ./rootCA.pem  -ca_key ./rootCA.key**
+**cd ~/gnmi_ssl/certs/ ; /home/auto/gnoi_cert -insecure -target_addr 10.1.1.5:9339 -op provision  -target_name c9300 -alsologtostderr -organization "my org" -ip_address 10.1.1.5 -time_out=10s -min_key_size=2048 -cert_id gnxi-cert -state BC -country CA -ca ./rootCA.pem  -ca_key ./rootCA.key**
 
 You will see a log message like "Install Successfull"
 
