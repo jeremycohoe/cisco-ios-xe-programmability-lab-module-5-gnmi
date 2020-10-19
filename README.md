@@ -87,6 +87,7 @@ Copy the command to provision the certificates:
 
 You will see a log message like "Install Successfull"
 
+If the gRPC-TLS module was previously completed then this step can be skipped - the certificate was already loaded as part of the previous module. Contiune on to validation as this was not covered in the gRPC-TLS section.
 
 
 
