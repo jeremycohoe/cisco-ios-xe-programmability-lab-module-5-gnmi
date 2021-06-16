@@ -109,6 +109,10 @@ Running OS version: 17.06.01.0.1005.1623134733
 OS.proto supports the install operation that can be used to upgrade the devices software to a different version. 
 
 
+**gnoi_os -insecure -target_addr 10.1.1.3:9339 -op install -target_name c9300 -alsologtostderr -cert ./client.crt -ca ./rootCA.pem   -key ./rootCA.key -version 17.06.01.0.135639.1618187331 -time_out 999s -os /tftpboot/cat9k_iosxe.17.06.01-20210411.bin**
+
+
+
 ## Conclusion
 
 In this module the gNMI YANG Model Driven Programmatic interface (API) has been configured and enabled in both secure and non-secure modes. The YANGSuite and gNMI_cli tools have been used to interact with the gNMI API interface using the GUI and CLI based tooling to perform basic GET operations.
