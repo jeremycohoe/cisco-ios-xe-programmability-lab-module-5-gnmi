@@ -94,25 +94,69 @@ go get github.com/google/gnxi/gnoi_os
 go install github.com/google/gnxi/gnoi_os
 ```
 
+## Versions and Verification
+
+In this lab there are **2** different OS versions being used both based off of IOS XE 17.6. Think of these as 17.6.1 and 17.6.2. The versions are:
+
+```
+Image from June 16:
+Cisco IOS XE Software, Version BLD_V176_THROTTLE_LATEST_20210616_014014
+Bin file = cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210616_014014.SSA.bin
+Version = 17.06.01.0.1228.1623826172
+
+IMG=/tftpboot/cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210616_014014.SSA.bin
+VER=17.06.01.0.1228.1623826172
+
+
+
+or
+
+
+Image from June 17:
+Cisco IOS XE Software, Version BLD_V176_THROTTLE_LATEST_20210617_013727
+Bin file = cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210617_013727.SSA.bin
+Version = 17.06.01.0.1260.1623912562
+
+IMG=/tftpboot/cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210617_013727.SSA.bin
+VER=17.06.01.0.1260.1623912562
+```
+
 Use the command below to **verify** the current running IOS XE version by using the **gnoi_os** verify operation:
 
 **cd ~/gnmi_ssl/certs ; gnoi_os -insecure -target_addr 10.1.1.5:9339 -op verify -target_name c9300 -alsologtostderr -cert ./client.crt -ca ./rootCA.pem   -key ./rootCA.key**
 
-The output should be similar to the following:
+The output should be similar to the following, depending on which version that is currently running on the device:
 
 ```
-Running OS version: 17.06.01.0.1005.1623134733
+Running OS version: 17.06.01.0.1260.1623912562
+
+or
+
+Running OS version: 17.06.01.0.1228.1623826172
 ```
 
 Using the verify operation shows the full version of the running software. To determine the full version of IOS XE software that is to be installed next, the linux head command is used to look at the first 1024 bytes in the IOS XE.bin file and to filter for the CW_FULL variable. The IOS XE.bin file that is used will be stored in the **IMG** envrionment variable
 
-**IMG=/tftpboot/cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210616_014014.SSA.bin**
+```
+IMG=/tftpboot/cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210616_014014.SSA.bin
+
+or
+
+IMG=/tftpboot/cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210617_013727.SSA.bin
+```
+
+Now run the **head** command:
 
 **head -c 1024 $IMG | strings | grep -i CW_FULL**
 
 The output should look similar to the below:
+
 ```
 7CW_FULL_VERSION=$17.06.01.0.1228.1623826172..Bengaluru$
+
+or
+
+7CW_FULL_VERSION=$17.06.01.0.1260.1623912562..Bengaluru$
 ```
 
 In this example the version number is: 17.06.01.0.1228.1623826172 
@@ -121,12 +165,16 @@ Set this version number in the VER envrionment variable for use, similar to the 
 
 **VER=17.06.01.0.1228.1623826172**
 
+or
+
+**VER=17.06.01.0.1260.1623912562**
+
 Now that the exact version is known it can be used as part of the Install and Activate operations below.
 
 ## Install operation
 Run the **Install** operation:
 
-**gnoi_os -insecure -target_addr 10.1.1.5:9339 -op install -print_progress -target_name c9300 -alsologtostderr -cert ./client.crt -ca ./rootCA.pem   -key ./rootCA.key -version $VER -time_out 999s -os $IMG**
+**gnoi_os -insecure -target_addr 10.1.1.5:9339 -op install -target_name c9300 -alsologtostderr -cert ./client.crt -ca ./rootCA.pem   -key ./rootCA.key -version $VER -time_out 999s -os $IMG**
 
 On the switch console you should see log messages similar to below:
 
@@ -142,17 +190,17 @@ Run the **activate** operation once the install operation completes
 
 **gnoi_os -insecure -target_addr 10.1.1.5:9339 -op activate -target_name c9300 -alsologtostderr -cert ./client.crt -ca ./rootCA.pem   -key ./rootCA.key -version $VER -time_out 999s -os $IMG**
 
+You will see some log messages on the console similar to the following:
 
+```
+*Jun 17 22:25:07.592: %INSTALL-5-INSTALL_START_INFO: Switch 1 R0/0: install_engine: Started install activate
+*Jun 17 22:28:52.563: %INSTALL-5-INSTALL_AUTO_ABORT_TIMER_PROGRESS: Switch 1 R0/0: install_mgr: Install auto abort timer will expire in 7200 seconds
+*Jun 17 22:29:49.742: %INSTALL-5-INSTALL_COMPLETED_INFO: Switch 1 R0/0: install_engine: Completed install activate PACKAGE
+Connection closed by foreign host.
+```
 
 
 
 ## Conclusion
 
-In this module the gNMI YANG Model Driven Programmatic interface (API) has been configured and enabled in both secure and non-secure modes. The YANGSuite and gNMI_cli tools have been used to interact with the gNMI API interface using the GUI and CLI based tooling to perform basic GET operations.
-
-
-
-
-
-
-
+In this module the gNMI Network Operations Interface (gNOI) has been configured, enabled, and used with the OS.proto workflow to upgrade the software on the IOS XE Catalyst 9300 switch programmatically.
