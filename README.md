@@ -6,13 +6,7 @@
 ## Version: 17.6
 
 ## Topics Covered 
-Introduction to gNMI
 
-Enabling the API
-
-Tooling 
-
-Use Cases and examples
 
 
 ![](imgs/iosxelifecycle.png)
@@ -85,7 +79,7 @@ The ouptut should look similar. Note the **Secure trustpoint** is listed as **gn
 This concludes the gNOI cert.proto section as the certifcate has been installed into the device's truststore and is available for use with gNMI.
 
 
-## The gnoi_os tooling
+## gnoi_os tooling
 
 The gnoi_os tooling is available from https://github.com/google/gnxi/tree/master/gnoi_os and has already been installed into the Linux VM. If needing to reinstall or install this in your own lab, the commands to install the gnoi_os tooling would be similar to the following:
 
@@ -172,6 +166,7 @@ or
 Now that the exact version is known it can be used as part of the Install and Activate operations below.
 
 ## Install operation
+
 Run the **Install** operation:
 
 **gnoi_os -insecure -target_addr 10.1.1.5:9339 -op install -target_name c9300 -alsologtostderr -cert ./client.crt -ca ./rootCA.pem   -key ./rootCA.key -version $VER -time_out 999s -os $IMG**
@@ -186,6 +181,7 @@ Completed install add PACKAGE flash:gNOI_iosxe_17.06.01.0.1228.1623826172.bin
 
 
 ## Activate operation
+
 Run the **activate** operation once the install operation completes
 
 **gnoi_os -insecure -target_addr 10.1.1.5:9339 -op activate -target_name c9300 -alsologtostderr -cert ./client.crt -ca ./rootCA.pem   -key ./rootCA.key -version $VER -time_out 999s -os $IMG**
@@ -199,6 +195,15 @@ You will see some log messages on the console similar to the following:
 Connection closed by foreign host.
 ```
 
+## Catalyst 9300 Serial Console connection
+
+(optional) Connect to the serial console of the Catalyst 9300 switch as the software upgrade process completes to understand the log messages and details of the upgrade.
+
+Connect to the Serial Console of the C9300 using the ~/console-helper.sh script by running the following command from the linux prompt:
+
+**~/console-helper.sh**
+
+You will be connected to the serial console port for your POD's switch.
 
 
 ## Conclusion
