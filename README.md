@@ -209,3 +209,7 @@ You will be connected to the serial console port for your POD's switch.
 ## Conclusion
 
 In this module the gNMI Network Operations Interface (gNOI) has been configured, enabled, and used with the OS.proto workflow to upgrade the software on the IOS XE Catalyst 9300 switch programmatically.
+
+Please mark this module complete in the following SmartSheet form and be sure to include your name, e-mail ID, and pod #
+
+https://app.smartsheet.com/b/form/134240eac2d84a57acd4efc24fd8f3d0
