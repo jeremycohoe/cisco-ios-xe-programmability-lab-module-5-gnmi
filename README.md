@@ -63,7 +63,9 @@ Copy the linux command to provision the certificates:
 
 **cd ~/gnmi_ssl/certs/ ; /home/auto/gnoi_cert -target_addr c9300:9339 -op provision -target_name c9300 -alsologtostderr -organization "jcohoe org" -ip_address 10.1.1.5 -time_out=10s -min_key_size=2048 -cert_id gnxi-cert -state BC -country CA -ca ./rootCA.pem -key ./rootCA.key**
 
-You will see a log message like "Install Successfull"
+You will see a log message like "Install Successfull" similar to the screenshot below
+
+![](./imgs/provision_gnmi.png)
 
 
 ## Validating gNMI provisioned
