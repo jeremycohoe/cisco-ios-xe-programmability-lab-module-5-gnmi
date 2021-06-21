@@ -174,9 +174,7 @@ The output should look similar to the below:
 
 ```
 7CW_FULL_VERSION=$17.06.01.0.1228.1623826172..Bengaluru$
-
 or
-
 7CW_FULL_VERSION=$17.06.01.0.1260.1623912562..Bengaluru$
 ```
 
@@ -194,7 +192,11 @@ Now that the exact version is known it can be used as part of the Install and Ac
 
 ## Install operation
 
-Run the **Install** operation:
+Run the **Install** operation after checking the IMG and VER variables are set correctly:
+
+**echo $VER**
+
+**echo $IMG**
 
 **gnoi_os -insecure -target_addr 10.1.1.5:9339 -op install -target_name c9300 -alsologtostderr -cert ./client.crt -ca ./rootCA.pem   -key ./rootCA.key -version $VER -time_out 999s -os $IMG**
 
