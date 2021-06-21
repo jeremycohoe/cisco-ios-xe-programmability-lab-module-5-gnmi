@@ -92,26 +92,25 @@ go install github.com/google/gnxi/gnoi_os
 
 ## Versions and Verification
 
-In this lab there are **2** different OS versions being used both based off of IOS XE 17.6. Think of these as 17.6.1 and 17.6.2. The versions are:
+In this lab there are **2** different OS versions being used both based off of IOS XE 17.6. Think of these as 17.6.1 and 17.6.2 and you will be upgrading/downgrading the version as part of this lab. The two versions are:
 
 ```
 Image from June 16:
 Cisco IOS XE Software, Version BLD_V176_THROTTLE_LATEST_20210616_014014
-Bin file = cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210616_014014.SSA.bin
-Version = 17.06.01.0.1228.1623826172
+Bin file    =   cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210616_014014.SSA.bin
+Version     =   17.06.01.0.1228.1623826172
 
 IMG=/tftpboot/cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210616_014014.SSA.bin
 VER=17.06.01.0.1228.1623826172
 
 
-
-or
+...or...
 
 
 Image from June 17:
 Cisco IOS XE Software, Version BLD_V176_THROTTLE_LATEST_20210617_013727
-Bin file = cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210617_013727.SSA.bin
-Version = 17.06.01.0.1260.1623912562
+Bin file    =   cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210617_013727.SSA.bin
+Version     =   17.06.01.0.1260.1623912562
 
 IMG=/tftpboot/cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210617_013727.SSA.bin
 VER=17.06.01.0.1260.1623912562
@@ -124,22 +123,48 @@ Use the command below to **verify** the current running IOS XE version by using 
 The output should be similar to the following, depending on which version that is currently running on the device:
 
 ```
-Running OS version: 17.06.01.0.1260.1623912562
+Running OS version: 17.06.01.0.1228.1623826172
 
 or
 
-Running OS version: 17.06.01.0.1228.1623826172
+Running OS version: 17.06.01.0.1260.1623912562
 ```
+
+If you device is running version 17.6.1.1260, set the following variables to upgrade to 17.6.1.1228
+
+**IMG=/tftpboot/cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210616_014014.SSA.bin**
+
+**VER=17.06.01.0.1228.1623826172**
+
+
+.
+
+.
+
+
+... or ...
+
+.
+
+.
+
+
+If your device is running version 17.6.1.1228, set the following variables to upgrade to 17.6.1.1260
+
+**IMG=/tftpboot/cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210617_013727.SSA.bin**
+
+**VER=17.06.01.0.1260.1623912562**
+
 
 Using the verify operation shows the full version of the running software. To determine the full version of IOS XE software that is to be installed next, the linux head command is used to look at the first 1024 bytes in the IOS XE.bin file and to filter for the CW_FULL variable. The IOS XE.bin file that is used will be stored in the **IMG** envrionment variable
 
-```
-IMG=/tftpboot/cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210616_014014.SSA.bin
+
+**IMG=/tftpboot/cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210616_014014.SSA.bin**
 
 or
 
-IMG=/tftpboot/cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210617_013727.SSA.bin
-```
+**IMG=/tftpboot/cat9k_iosxe.BLD_V176_THROTTLE_LATEST_20210617_013727.SSA.bin**
+
 
 Now run the **head** command:
 
@@ -173,6 +198,8 @@ Run the **Install** operation:
 
 **gnoi_os -insecure -target_addr 10.1.1.5:9339 -op install -target_name c9300 -alsologtostderr -cert ./client.crt -ca ./rootCA.pem   -key ./rootCA.key -version $VER -time_out 999s -os $IMG**
 
+![](./imgs/install_op.png)
+
 On the switch console you should see log messages similar to below:
 
 ```
@@ -180,6 +207,8 @@ Started install add flash:gNOI_iosxe_17.06.01.0.1228.1623826172.bin
 
 Completed install add PACKAGE flash:gNOI_iosxe_17.06.01.0.1228.1623826172.bin
 ```
+
+
 
 
 ## Activate operation
