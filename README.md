@@ -57,9 +57,9 @@ Settings
 
 ## Provision gNMI
 
-Loading the TLS certificates that are required for use with the GNMI API, this can be done using the gnoi_cert tooling as shown below. 
+Loading the TLS certificates that are required for use with the GNMI API, this can be done using the gnoi_cert tooling from the Linux command shell.
 
-Copy the command to provision the certificates:
+Copy the linux command to provision the certificates:
 
 **cd ~/gnmi_ssl/certs/ ; /home/auto/gnoi_cert -target_addr c9300:9339 -op provision -target_name c9300 -alsologtostderr -organization "jcohoe org" -ip_address 10.1.1.5 -time_out=10s -min_key_size=2048 -cert_id gnxi-cert -state BC -country CA -ca ./rootCA.pem -key ./rootCA.key**
 
